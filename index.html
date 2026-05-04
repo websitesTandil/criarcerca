@@ -1019,29 +1019,6 @@
     renderProviders();
   }
 
-  function setCategoryByHash(hash) {
-    const cat = hash.replace('#', '') || 'todos';
-    const btn = document.querySelector(\`.filter-btn[onclick*="'\${cat}'"]\`);
-    if (btn) {
-      currentCategory = cat;
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    }
-  }
-
-  // Leer hash al cargar la página
-  window.addEventListener('load', () => {
-    if (window.location.hash) {
-      setCategoryByHash(window.location.hash);
-    }
-    renderProviders();
-  });
-
-  // Manejar botón atrás/adelante del navegador
-  window.addEventListener('popstate', () => {
-    setCategoryByHash(window.location.hash);
-    renderProviders();
-  });
 
   function filterProviders() {
     currentSearch = document.getElementById('searchInput').value.toLowerCase();
@@ -1118,17 +1095,16 @@
     document.getElementById('formSuccess').style.display = 'block';
   }
 
+  // ── INIT ──
+  renderProviders();
+
   // ── SCROLL ANIMATIONS ──
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) e.target.classList.add('visible');
     });
   }, { threshold: 0.1 });
-
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-  // ── INIT ──
-  // renderProviders se llama desde el evento load
 </script>
 </body>
 </html>
