@@ -1012,13 +1012,30 @@
     btn.classList.add('active');
     // Actualizar URL
     if (cat === 'todos') {
-      history.pushState(null, '', window.location.pathname);
+      history.replaceState(null, '', window.location.pathname);
     } else {
-      history.pushState(null, '', '#' + cat);
+      history.replaceState(null, '', '?cat=' + encodeURIComponent(cat));
     }
     renderProviders();
   }
 
+
+  // Leer ?cat= al cargar
+  (function() {
+    var params = new URLSearchParams(window.location.search);
+    var cat = params.get('cat');
+    if (cat) {
+      var btns = document.querySelectorAll('.filter-btn');
+      btns.forEach(function(btn) {
+        var onclick = btn.getAttribute('onclick') || '';
+        if (onclick.indexOf("'" + cat + "'") !== -1) {
+          currentCategory = cat;
+          btns.forEach(function(b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+        }
+      });
+    }
+  })();
 
   function filterProviders() {
     currentSearch = document.getElementById('searchInput').value.toLowerCase();
