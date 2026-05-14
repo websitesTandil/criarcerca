@@ -871,7 +871,7 @@
       category: "salud",
       image: "https://i.ibb.co/hFL3XXRS/Whats-App-Image-2026-05-13-at-17-50-49.jpg",
       color: "color-1",
-      description: "Creadora de Mamá Pulpo. Doula, puericultora y asesora de porteo. Acompaño a familias durante el embarazo, el nacimiento, la lactancia y la crianza, brindando apoyo, información y contención en cada etapa. Además, ofrezco: Servicio de niñeras, Alquimia placentaria, Alquiler de extractores eléctricos, Ceremonias Blessing Way, Talleres, cursos y más. Trabajo de manera presencial y virtual.",
+      description: "Creadora de Mamá Pulpo. Doula, puericultora y asesora de porteo.<br><br>Acompaño a familias durante el embarazo, el nacimiento, la lactancia y la crianza, brindando apoyo, información y contención en cada etapa.<br><strong>También ofrezco:</strong><br>• Servicio de niñeras<br>• Alquimia placentaria<br>• Alquiler de extractores eléctricos<br>• Ceremonias Blessing Way<br>• Talleres y cursos<br><br>Trabajo de manera presencial y virtual.",
       location: "Tandil",
       whatsapp: "2494342588 ",
       instagram: "@chechu.mamapulpo",
@@ -1126,7 +1126,7 @@
     }
     document.getElementById('modalCat').textContent = categoryLabel(p.category);
     document.getElementById('modalName').textContent = p.name;
-    document.getElementById('modalDesc').textContent = p.description;
+    document.getElementById('modalDesc').innerHTML = p.description;
     document.getElementById('modalInfo').innerHTML = `
       <div class="modal-info-row"><span class="label">📍 Zona</span><span>${p.location}</span></div>
       ${p.instagram ? `<div class="modal-info-row"><span class="label"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg> Instagram</span><a href="https://instagram.com/${p.instagram.replace('@','')}" target="_blank" style="color:var(--green-mid)">${p.instagram}</a></div>` : ''}
