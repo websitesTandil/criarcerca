@@ -906,6 +906,28 @@
 <script>
   const providers = [
     {
+      id: 17,
+      name: "Savia Maternal",
+      category: "salud",
+      image: "https://i.ibb.co/VWZmQfqv/Whats-App-Image-2026-05-19-at-16-04-02.jpg",
+      color: "color-1",
+      description: "Puericultora y canto prenatal.<br>.Mi nombre es Natalia Otranto acompaño a embarazadas y familias en el camino de la lactancia, el puerperio y la crianza temprana.<br>Asistencia 1.1<br>Talleres de canto prenatal, destete respetuoso y stock de leche<br>"
+      location: "Tandil. Presencial y Online.",
+      instagram: "@saviamaternal",
+      whatsapp: "2494498164"
+    },
+    {
+      id: 16,
+      name: "CV Accesorios",
+      category: "ropa",
+      image: "https://i.ibb.co/gZFQ2hF2/Whats-App-Image-2026-05-19-at-13-13-53.jpg",
+      color: "color-1",
+      description: "Emprendimiento dedicado a crear accesorios únicos, personalizados y hechos con amor 💖<br> Trabajamos con moños, vinchas, colitas, scrunchies, hebillas y accesorios para bebés, niñas y mujeres, ideales para cualquier ocasión y momentos especiales ✨<br> Cada diseño está pensado para combinar ternura, calidad y estilo, cuidando cada detalle para que cada accesorio sea verdaderamente especial 💕<br>Nos encanta innovar, crear nuevos modelos y acompañar momentos importantes con accesorios delicados, originales y llenos de personalidad ✨<br>📍Pedidos personalizados<br>💌 Escribime y lo hacemos realidad<br>🎀 Diseños exclusivos hechos con amor<br>"
+      location: "Tandil.",
+      instagram: "@c.v.accesorios",
+      noWhatsapp: true
+    },
+    {
       id: 15,
       name: "Vero Zieres",
       category: "alimentos",
@@ -1204,7 +1226,14 @@
       <div class="modal-info-row"><span class="label">📍 Zona</span><span>${p.location}</span></div>
       ${p.instagram ? `<div class="modal-info-row"><span class="label"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg> Instagram</span><a href="https://instagram.com/${p.instagram.replace('@','')}" target="_blank" style="color:var(--green-mid)">${p.instagram}</a></div>` : ''}
     `;
-    document.getElementById('modalContact').href = `https://wa.me/54${p.whatsapp}?text=Hola! Te contacto desde Criar Cerca 🌿`;
+    const contactBtn = document.getElementById('modalContact');
+    if (p.noWhatsapp && p.instagram) {
+      contactBtn.href = `https://instagram.com/${p.instagram.replace('@', '')}`;
+      contactBtn.textContent = 'Ver en Instagram';
+    } else {
+      contactBtn.href = `https://wa.me/54${p.whatsapp}?text=Hola! Te contacto desde Criar Cerca 🌿`;
+      contactBtn.textContent = 'Contactar por WhatsApp';
+    }
     document.getElementById('modalOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
   }
