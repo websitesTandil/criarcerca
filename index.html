@@ -509,10 +509,20 @@
         fechaSolicitud: new Date().toISOString()
       });
 
+      await emailjs.send("service_jg3hhda", "template_t8uvvkl", {
+        nombre: nombre,
+        negocio: negocio,
+        categoria: categoria,
+        whatsapp: whatsapp,
+        descripcion: descripcion,
+        instagram: instagram,
+        to_email: "andreatoyos@gmail.com"
+      });
+
       document.getElementById('formContent').style.display = 'none';
       document.getElementById('formSuccess').style.display = 'block';
     } catch (err) {
-      console.error("Error:", err);
+      console.error("Error guardando solicitud:", err);
       alert('Hubo un error al enviar tu solicitud. Por favor intentá de nuevo.');
       btn.disabled = false;
       btn.textContent = 'Quiero aparecer en el directorio 🌿';
@@ -549,6 +559,10 @@
 
   // ── Init ──
   loadProviders();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  emailjs.init("FGL1azSVkTW9ot4NP"); // lo encontrás en EmailJS dashboard
 </script>
 </body>
 </html>
