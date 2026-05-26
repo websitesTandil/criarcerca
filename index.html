@@ -4,12 +4,13 @@
 <meta name="google-site-verification" content="pICeSIWU88REca4g17Dns_Z4qsSN4SET-N3uMSDTCMY" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Criar Cerca — Servicios para familias en Tandil y zona...</title>
+<title>Criar Cerca — Servicios para familias en Tandil y zona</title>
 <meta name="description" content="Criar Cerca es el directorio de servicios para familias de Tandil y zona. Encontrá niñeras, fotógrafos, ropa infantil, alimentos saludables y mucho más cerca tuyo." />
 <meta name="keywords" content="servicios para familias Tandil, niñeras Tandil, ropa bebés Tandil, fotógrafo bebés Tandil, alimentos saludables Tandil, directorio familias Tandil, criar cerca" />
 <meta name="author" content="Criar Cerca" />
 <meta name="robots" content="index, follow" />
-<link rel="canonical" href="https://websitestandil.github.io/criarcerca/" />  
+<link rel="canonical" href="https://websitestandil.github.io/criarcerca/" />
+
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://websitestandil.github.io/criarcerca/" />
@@ -253,7 +254,7 @@
       const q = query(
         collection(db, "providers"),
         where("pendiente", "==", false),
-        orderBy("orden", "asc")
+        orderBy("fechaCreacion", "desc")
       );
       const snapshot = await getDocs(q);
       allProviders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -508,20 +509,10 @@
         fechaSolicitud: new Date().toISOString()
       });
 
-      await emailjs.send("service_jg3hhda", "template_t8uvvkl", {
-        nombre: nombre,
-        negocio: negocio,
-        categoria: categoria,
-        whatsapp: whatsapp,
-        descripcion: descripcion,
-        instagram: instagram,
-        to_email: "andreatoyos@gmail.com"
-      });
-
       document.getElementById('formContent').style.display = 'none';
       document.getElementById('formSuccess').style.display = 'block';
     } catch (err) {
-      console.error("Error guardando solicitud:", err);
+      console.error("Error:", err);
       alert('Hubo un error al enviar tu solicitud. Por favor intentá de nuevo.');
       btn.disabled = false;
       btn.textContent = 'Quiero aparecer en el directorio 🌿';
@@ -558,10 +549,6 @@
 
   // ── Init ──
   loadProviders();
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>
-  emailjs.init("FGL1azSVkTW9ot4NP"); // lo encontrás en EmailJS dashboard
 </script>
 </body>
 </html>

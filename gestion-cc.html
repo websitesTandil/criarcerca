@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="admin.css">
 </head>
 <body>
+
 <!-- LOGIN CON GOOGLE -->
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
@@ -102,10 +103,6 @@
       <label>URL de imagen (ibb.co u otro hosting)</label>
       <input type="text" id="editImage" placeholder="https://..." />
       <div id="editImagePreview"></div>
-    </div>
-    <div class="form-group">
-      <label>Orden de aparición (número, menor = primero)</label>
-      <input type="number" id="editOrden" value="99" />
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
@@ -236,7 +233,7 @@
   async function loadPublicados() {
     const lista = document.getElementById('listaPublicados');
     try {
-      const q = query(collection(db, "providers"), orderBy("orden", "asc"));
+      const q = query(collection(db, "providers"), orderBy("fechaCreacion", "desc"));
       const snap = await getDocs(q);
       const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
@@ -334,10 +331,11 @@
       whatsapp: document.getElementById('editWhatsapp').value.trim(),
       instagram: document.getElementById('editInstagram').value.trim(),
       image: document.getElementById('editImage').value.trim(),
-      orden: parseInt(document.getElementById('editOrden').value) || 99,
       color: 'color-1',
-      pendiente: false
+      pendiente: false,
+      fechaCreacion: isApproving ? new Date().toISOString() : undefined
     };
+    if (!isApproving) delete providerData.fechaCreacion;
 
     try {
       if (isApproving) {
