@@ -12,6 +12,7 @@
     --red: #c0392b;
     --red-light: #fdecea;
   }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
 
