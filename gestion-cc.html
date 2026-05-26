@@ -102,6 +102,7 @@
     <div class="form-group">
       <label>URL de imagen (ibb.co u otro hosting)</label>
       <input type="text" id="editImage" placeholder="https://..." />
+      <div id="editImagePreview"></div>
     </div>
     <div class="form-group">
       <label>Orden de aparición (número, menor = primero)</label>
@@ -206,6 +207,7 @@
 
       lista.innerHTML = docs.map(s => `
         <div class="card" id="sol-${s.id}">
+          ${s.image ? `<div class="card-thumb"><img src="${s.image}" alt="${s.negocio}" /></div>` : ''}
           <div class="card-info">
             <div class="card-badge">${s.categoria}</div>
             <div class="card-name">${s.negocio} — ${s.nombre}</div>
@@ -286,8 +288,17 @@
     document.getElementById('editLocation').value = 'Tandil';
     document.getElementById('editWhatsapp').value = data.whatsapp || '';
     document.getElementById('editInstagram').value = data.instagram || '';
-    document.getElementById('editImage').value = '';
+    document.getElementById('editImage').value = data.image || '';
     document.getElementById('editOrden').value = 99;
+
+    // Mostrar preview de imagen si existe
+    const preview = document.getElementById('editImagePreview');
+    if (data.image) {
+      preview.innerHTML = `<img src="${data.image}" alt="Logo" style="max-height:80px;max-width:150px;object-fit:contain;border-radius:8px;margin-top:8px;border:1px solid #e2d8cc;" />`;
+    } else {
+      preview.innerHTML = '<p style="font-size:0.8rem;color:#999;margin-top:4px;">Sin imagen — podés agregar una URL manualmente</p>';
+    }
+
     document.getElementById('editModal').classList.add('active');
   };
 

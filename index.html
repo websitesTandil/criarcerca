@@ -167,6 +167,25 @@
         <label>Contanos qué ofrecés</label>
         <textarea id="descripcion" placeholder="Describí brevemente tu servicio, zona de atención, etc."></textarea>
       </div>
+      <div class="form-group">
+        <label>Logo o foto de tu negocio <span style="font-weight:300;text-transform:none;letter-spacing:0">(opcional)</span></label>
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('logoInput').click()">
+          <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="handleImageSelect(event)" />
+          <div id="uploadPlaceholder">
+            <span style="font-size:2rem;">📷</span>
+            <p>Tocá para subir tu logo o foto</p>
+            <p style="font-size:0.75rem;opacity:0.6;">JPG, PNG o WebP · Máx 5MB</p>
+          </div>
+          <div id="uploadPreview" style="display:none">
+            <img id="previewImg" src="" alt="Preview" />
+            <button type="button" onclick="removeImage(event)">✕ Cambiar imagen</button>
+          </div>
+        </div>
+        <div id="uploadProgress" style="display:none">
+          <div class="upload-bar"><div class="upload-bar-fill" id="uploadBarFill"></div></div>
+          <p id="uploadStatus">Subiendo imagen...</p>
+        </div>
+      </div>
       <button class="btn-submit" id="submitBtn" onclick="submitForm()">Quiero aparecer en el directorio 🌿</button>
     </div>
     <div class="form-success" id="formSuccess">
@@ -387,6 +406,71 @@
     document.body.style.overflow = '';
   };
 
+  // ── Cloudinary upload ──
+  const CLOUDINARY_CLOUD = 'duyyacpk0';
+  const CLOUDINARY_PRESET = 'criar-cerca';
+  let selectedImageFile = null;
+  let uploadedImageUrl = '';
+
+  window.handleImageSelect = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert('La imagen no puede superar los 5MB.');
+      return;
+    }
+    selectedImageFile = file;
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('uploadPlaceholder').style.display = 'none';
+      document.getElementById('uploadPreview').style.display = 'flex';
+      document.getElementById('previewImg').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.removeImage = function(e) {
+    e.stopPropagation();
+    selectedImageFile = null;
+    uploadedImageUrl = '';
+    document.getElementById('logoInput').value = '';
+    document.getElementById('uploadPlaceholder').style.display = 'flex';
+    document.getElementById('uploadPreview').style.display = 'none';
+  };
+
+  async function uploadToCloudinary(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_PRESET);
+
+    document.getElementById('uploadProgress').style.display = 'block';
+    document.getElementById('uploadStatus').textContent = 'Subiendo imagen...';
+
+    const xhr = new XMLHttpRequest();
+    xhr.upload.onprogress = e => {
+      if (e.lengthComputable) {
+        const pct = Math.round((e.loaded / e.total) * 100);
+        document.getElementById('uploadBarFill').style.width = pct + '%';
+        document.getElementById('uploadStatus').textContent = `Subiendo... ${pct}%`;
+      }
+    };
+
+    return new Promise((resolve, reject) => {
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          const data = JSON.parse(xhr.responseText);
+          document.getElementById('uploadStatus').textContent = '✅ Imagen subida';
+          resolve(data.secure_url);
+        } else {
+          reject(new Error('Error al subir la imagen'));
+        }
+      };
+      xhr.onerror = () => reject(new Error('Error de conexión'));
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`);
+      xhr.send(formData);
+    });
+  }
+
   // ── Formulario → guarda en Firestore ──
   window.submitForm = async function() {
     const nombre = document.getElementById('nombre').value.trim();
@@ -406,7 +490,13 @@
     btn.textContent = 'Enviando...';
 
     try {
-      // Guardar en colección "solicitudes" con pendiente:true
+      // Subir imagen a Cloudinary si hay una seleccionada
+      if (selectedImageFile) {
+        btn.textContent = 'Subiendo imagen...';
+        uploadedImageUrl = await uploadToCloudinary(selectedImageFile);
+      }
+
+      // Guardar en Firestore
       await addDoc(collection(db, "solicitudes"), {
         nombre,
         negocio,
@@ -414,28 +504,19 @@
         whatsapp,
         instagram,
         descripcion,
+        image: uploadedImageUrl || '',
         pendiente: true,
         fechaSolicitud: new Date().toISOString()
       });
 
-      await emailjs.send("service_jg3hhda", "template_t8uvvkl", {
-        nombre: nombre,
-        negocio: negocio,
-        categoria: categoria,
-        whatsapp: whatsapp,
-        descripcion: descripcion,
-        instagram: instagram,
-        to_email: "andreatoyos@gmail.com"
-      });
-
-      // Mostrar mensaje de éxito
       document.getElementById('formContent').style.display = 'none';
       document.getElementById('formSuccess').style.display = 'block';
     } catch (err) {
-      console.error("Error guardando solicitud:", err);
+      console.error("Error:", err);
       alert('Hubo un error al enviar tu solicitud. Por favor intentá de nuevo.');
       btn.disabled = false;
       btn.textContent = 'Quiero aparecer en el directorio 🌿';
+      document.getElementById('uploadProgress').style.display = 'none';
     }
   };
 
@@ -468,10 +549,6 @@
 
   // ── Init ──
   loadProviders();
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>
-  emailjs.init("FGL1azSVkTW9ot4NP"); // lo encontrás en EmailJS dashboard
 </script>
 </body>
 </html>
