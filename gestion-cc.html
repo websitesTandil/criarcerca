@@ -296,7 +296,7 @@
   }
 
   // ── APROBAR → abre modal pre-cargado ──
-  window._aprobar = function(id, data) {
+  window._aprobar = async function(id, data) {
     currentEditId = id;
     currentEditCollection = 'solicitudes';
     isApproving = true;
