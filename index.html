@@ -262,7 +262,7 @@
       const q = query(
         collection(db, "providers"),
         where("pendiente", "==", false),
-        orderBy("fechaCreacion", "desc")
+        orderBy("fechaCreacion", "asc")
       );
       const snapshot = await getDocs(q);
       allProviders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
