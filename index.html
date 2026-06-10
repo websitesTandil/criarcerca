@@ -44,6 +44,12 @@
 }
 </script>
 
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  (function() { emailjs.init("FGL1azSVkTW9ot4NP"); })();
+</script>
+
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4E7W0PR5W"></script>
 <script>
@@ -510,6 +516,21 @@
         pendiente: true,
         fechaSolicitud: new Date().toISOString()
       });
+
+      // Notificar por mail
+      try {
+        await emailjs.send("service_jg3hhda", "template_t8uvvkl", {
+          negocio: negocio,
+          nombre: nombre,
+          categoria: categoria,
+          whatsapp: whatsapp,
+          instagram: instagram,
+          descripcion: descripcion,
+          to_email: "andreatoyos@hotmail.com"
+        });
+      } catch(mailErr) {
+        console.warn('Email no enviado:', mailErr);
+      }
 
       document.getElementById('formContent').style.display = 'none';
       document.getElementById('formSuccess').style.display = 'block';
