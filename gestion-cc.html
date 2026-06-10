@@ -104,10 +104,6 @@
       <input type="text" id="editImage" placeholder="https://..." />
       <div id="editImagePreview"></div>
     </div>
-    <div class="form-group">
-      <label>Orden de aparición (menor = primero)</label>
-      <input type="number" id="editOrden" value="99" min="1" max="999" />
-    </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
       <button class="btn-save" id="btnSaveModal" onclick="saveModal()">Guardar y publicar</button>
@@ -115,10 +111,6 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>
-  emailjs.init("TU_PUBLIC_KEY"); // Reemplazá con tu Public Key de EmailJS
-</script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
   import {
@@ -192,23 +184,6 @@
     document.getElementById('tabSolicitudes').style.display = tab === 'solicitudes' ? 'block' : 'none';
     document.getElementById('tabPublicados').style.display = tab === 'publicados' ? 'block' : 'none';
   };
-
-  // ── NOTIFICACIÓN POR MAIL ──
-  function notificarNuevaSolicitud(data) {
-    emailjs.send("TU_SERVICE_ID", "TU_TEMPLATE_ID", {
-      negocio: data.negocio || 'Sin nombre',
-      nombre: data.nombre || '',
-      categoria: data.categoria || '',
-      whatsapp: data.whatsapp || '',
-      instagram: data.instagram || '',
-      descripcion: data.descripcion || '',
-      to_email: "andreaolivos1801@gmail.com"
-    }).then(() => {
-      console.log('Mail enviado');
-    }).catch(err => {
-      console.warn('Error enviando mail:', err);
-    });
-  }
 
   // ── CARGAR SOLICITUDES PENDIENTES ──
   async function loadSolicitudes() {
@@ -296,7 +271,7 @@
   }
 
   // ── APROBAR → abre modal pre-cargado ──
-  window._aprobar = async function(id, data) {
+  window._aprobar = function(id, data) {
     currentEditId = id;
     currentEditCollection = 'solicitudes';
     isApproving = true;
@@ -310,13 +285,7 @@
     document.getElementById('editWhatsapp').value = data.whatsapp || '';
     document.getElementById('editInstagram').value = data.instagram || '';
     document.getElementById('editImage').value = data.image || '';
-    // Calcular orden automático
-    try {
-      const snapCount = await getDocs(collection(db, "providers"));
-      document.getElementById('editOrden').value = snapCount.size + 1;
-    } catch(e) {
-      document.getElementById('editOrden').value = 99;
-    }
+    document.getElementById('editOrden').value = 99;
 
     // Mostrar preview de imagen si existe
     const preview = document.getElementById('editImagePreview');
