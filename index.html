@@ -104,6 +104,7 @@
     <button class="filter-btn" onclick="setCategory('salud', this)">💚 Salud</button>
     <button class="filter-btn" onclick="setCategory('ropa', this)">🧸 Ropa y accesorios</button>
     <button class="filter-btn" onclick="setCategory('alimentos', this)">🥗 Alimentos</button>
+    <button class="filter-btn" onclick="setCategory('fiestas', this)">🎉 Fiestas y Eventos</button>
     <button class="filter-btn" onclick="setCategory('otros', this)">✨ Otros</button>
   </div>
 </section>
@@ -159,6 +160,7 @@
           <option value="salud">💚 Salud / Bienestar / Estimulación</option>
           <option value="ropa">🧸 Ropa y accesorios</option>
           <option value="alimentos">🥗 Alimentos</option>
+          <option value="fiestas">🎉 Fiestas y Eventos</option>
           <option value="otros">✨ Otros</option>
         </select>
       </div>
@@ -346,6 +348,7 @@
       salud: 'Salud',
       ropa: 'Ropa y accesorios',
       alimentos: 'Alimentos',
+      fiestas: 'Fiestas y Eventos',
       otros: 'Otros'
     };
     return labels[cat] || cat;
