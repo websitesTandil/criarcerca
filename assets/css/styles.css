@@ -154,7 +154,7 @@
   /* ── SEARCH ── */
   .search-section {
     background: var(--white);
-    padding: 56px 32px;
+    padding: 95px 32px 56px 32px;
     text-align: center;
     border-bottom: 1px solid var(--sand);
   }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/x-icon" href="assets/img/favicon.ico">
 <meta name="google-site-verification" content="pICeSIWU88REca4g17Dns_Z4qsSN4SET-N3uMSDTCMY" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,16 +17,16 @@
 <meta property="og:url" content="https://www.criarcerca.com.ar" />
 <meta property="og:title" content="Criar Cerca — Servicios para familias en Tandil y zona" />
 <meta property="og:description" content="El directorio de servicios para familias de Tandil y zona. Niñeras, fotógrafos, ropa infantil, alimentos saludables, servicios para eventos y mucho más cerca tuyo." />
-<meta property="og:image" content="https://www.criarcerca.com.ar/logo.png" />
+<meta property="og:image" content="https://www.criarcerca.com.ar/assets/img/logo.png" />
 <meta property="og:locale" content="es_AR" />
 <meta property="og:site_name" content="Criar Cerca" />
 
-  
+
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Criar Cerca — Servicios para familias en Tandil y zona" />
 <meta name="twitter:description" content="El directorio de servicios para familias de Tandil y zona. Niñeras, fotógrafos, ropa infantil, alimentos saludables y mucho más." />
-<meta name="twitter:image" content="https://www.criarcerca.com.ar/logo.png" />
+<meta name="twitter:image" content="https://www.criarcerca.com.ar/assets/img/logo.png" />
 
 <!-- Schema.org structured data -->
 <script type="application/ld+json">
@@ -46,12 +46,6 @@
 }
 </script>
 
-<!-- EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>
-  (function() { emailjs.init("FGL1azSVkTW9ot4NP"); })();
-</script>
-
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4E7W0PR5W"></script>
 <script>
@@ -62,16 +56,16 @@
   gtag('config', 'G-S4E7W0PR5W');
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
 
 <!-- HEADER -->
 <header>
-  <div class="logo">Criar <span>Cerca</span></div>
+  <a href="index.html" class="logo">Criar <span>Cerca</span></a>
   <nav>
-    <a href="#servicios">Servicios</a>
-    <a href="#unirse">Publicá tu negocio</a>
+    <a href="servicios.html">Servicios</a>
+    <a href="unirse.html">Publicá tu negocio</a>
     <a href="https://www.instagram.com/criar.cerca" target="_blank">Instagram</a>
   </nav>
 </header>
@@ -84,126 +78,8 @@
     <h1>Todo lo que tu familia necesita, <em>cerca tuyo</em></h1>
     <p>El directorio de servicios para familias de Tandil y la región. Niñeras, fotógrafos, estimulación temprana, salud, ropa y mucho más.</p>
     <div class="hero-ctas">
-      <a href="#servicios" class="btn-primary">Ver servicios</a>
-      <a href="#unirse" class="btn-outline">Publicá tu negocio</a>
-    </div>
-  </div>
-</section>
-
-<!-- SEARCH -->
-<section class="search-section" id="servicios">
-  <h2>¿Qué estás buscando?</h2>
-  <p>Encontrá el servicio perfecto para tu familia</p>
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Ej: niñera, fotógrafa, estimulación..." />
-    <button onclick="filterProviders()">Buscar</button>
-  </div>
-  <div class="category-filters">
-    <button class="filter-btn active" onclick="setCategory('todos', this)">Todos</button>
-    <button class="filter-btn" onclick="setCategory('niñeras', this)">👶 Niñeras</button>
-    <button class="filter-btn" onclick="setCategory('fotografia', this)">📸 Fotografía</button>
-    <button class="filter-btn" onclick="setCategory('salud', this)">💚 Salud</button>
-    <button class="filter-btn" onclick="setCategory('ropa', this)">🧸 Ropa y accesorios</button>
-    <button class="filter-btn" onclick="setCategory('alimentos', this)">🥗 Alimentos</button>
-    <button class="filter-btn" onclick="setCategory('fiestas', this)">🎉 Fiestas y Eventos</button>
-    <button class="filter-btn" onclick="setCategory('otros', this)">✨ Otros</button>
-  </div>
-</section>
-
-<!-- PROVIDERS -->
-<section class="providers-section">
-  <div class="section-header fade-in">
-    <h2>Servicios disponibles</h2>
-    <span id="providerCount">Cargando...</span>
-  </div>
-  <div class="providers-grid" id="providersGrid">
-    <!-- Loading state inicial -->
-    <div class="loading-state" style="grid-column: 1/-1;">
-      <div class="loading-spinner"></div>
-      <p>Cargando servicios...</p>
-    </div>
-  </div>
-  <div class="empty-state" id="emptyState">
-    <div class="icon">🌿</div>
-    <h3>No encontramos resultados</h3>
-    <p>Probá con otra búsqueda o categoría</p>
-  </div>
-  <div class="coming-soon" id="comingSoon">
-    <div class="cs-icon">🌱</div>
-    <h3>¡Los primeros servicios están por llegar!</h3>
-    <p>Estamos sumando los mejores servicios para familias de Tandil y zona. ¿Tenés un negocio o servicio? ¡Sé de los primeros en aparecer!</p>
-    <a href="#unirse">Publicá tu servicio gratis</a>
-  </div>
-</section>
-
-<!-- FORM -->
-<section class="form-section" id="unirse">
-  <h2>¿Tenés un negocio o servicio?</h2>
-  <p>Publicá gratis y llegá a cientos de familias de Tandil y zona</p>
-  <div class="form-container fade-in">
-    <div id="formContent">
-      <div class="form-row">
-        <div class="form-group">
-          <label>Nombre</label>
-          <input type="text" id="nombre" placeholder="Tu nombre" />
-        </div>
-        <div class="form-group">
-          <label>Negocio / Servicio</label>
-          <input type="text" id="negocio" placeholder="Ej: Fotos de bebés" />
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Categoría</label>
-        <select id="categoria">
-          <option value="">Seleccioná una categoría</option>
-          <option value="niñeras">👶 Niñeras / Cuidado</option>
-          <option value="fotografia">📸 Fotografía</option>
-          <option value="salud">💚 Salud / Bienestar / Estimulación</option>
-          <option value="ropa">🧸 Ropa y accesorios</option>
-          <option value="alimentos">🥗 Alimentos</option>
-          <option value="fiestas">🎉 Fiestas y Eventos</option>
-          <option value="otros">✨ Otros</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>WhatsApp</label>
-          <input type="text" id="whatsapp" placeholder="Ej: 2494 000000" />
-        </div>
-        <div class="form-group">
-          <label>Instagram (opcional)</label>
-          <input type="text" id="instagram" placeholder="@tunombre" />
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Contanos qué ofrecés</label>
-        <textarea id="descripcion" placeholder="Describí brevemente tu servicio, zona de atención, etc."></textarea>
-      </div>
-      <div class="form-group">
-        <label>Logo o foto de tu negocio <span style="font-weight:300;text-transform:none;letter-spacing:0">(opcional)</span></label>
-        <div class="upload-area" id="uploadArea" onclick="document.getElementById('logoInput').click()">
-          <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="handleImageSelect(event)" />
-          <div id="uploadPlaceholder">
-            <span style="font-size:2rem;">📷</span>
-            <p>Tocá para subir tu logo o foto</p>
-            <p style="font-size:0.75rem;opacity:0.6;">JPG, PNG o WebP · Máx 5MB</p>
-          </div>
-          <div id="uploadPreview" style="display:none">
-            <img id="previewImg" src="" alt="Preview" />
-            <button type="button" onclick="removeImage(event)">✕ Cambiar imagen</button>
-          </div>
-        </div>
-        <div id="uploadProgress" style="display:none">
-          <div class="upload-bar"><div class="upload-bar-fill" id="uploadBarFill"></div></div>
-          <p id="uploadStatus">Subiendo imagen...</p>
-        </div>
-      </div>
-      <button class="btn-submit" id="submitBtn" onclick="submitForm()">Quiero aparecer en el directorio 🌿</button>
-    </div>
-    <div class="form-success" id="formSuccess">
-      <div class="icon">💚</div>
-      <h3>¡Gracias por sumarte!</h3>
-      <p>Recibimos tu información, próximamente estará publicado en la web.</p>
+      <a href="servicios.html" class="btn-primary">Ver servicios</a>
+      <a href="unirse.html" class="btn-outline">Publicá tu negocio</a>
     </div>
   </div>
 </section>
@@ -215,368 +91,5 @@
   <p><a href="https://www.instagram.com/criar.cerca" target="_blank">@criar.cerca</a></p>
 </footer>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal" id="modal">
-    <div class="modal-header" id="modalHeader">
-      <span id="modalEmoji"></span>
-      <button class="modal-close" onclick="closeModalBtn()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="modal-cat" id="modalCat"></div>
-      <h2 id="modalName"></h2>
-      <p id="modalDesc"></p>
-      <div class="modal-info" id="modalInfo"></div>
-      <a href="#" class="modal-contact-btn" id="modalContact" target="_blank">Contactar por WhatsApp</a>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     FIREBASE — solo cambiar firebaseConfig si es necesario
-     ══════════════════════════════════════════════ -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-  import {
-    getFirestore, collection, getDocs, addDoc,
-    query, where, orderBy
-  } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyC0sxBnKRIfwMDQrELvyYWOYtTHx2oQ5CM",
-    authDomain: "criar-cerca.firebaseapp.com",
-    projectId: "criar-cerca",
-    storageBucket: "criar-cerca.firebasestorage.app",
-    messagingSenderId: "217825387626",
-    appId: "1:217825387626:web:b25f3683d7783b9dead613",
-    measurementId: "G-S4E7W0PR5W"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // ── Estado global ──
-  let allProviders = [];
-  let currentCategory = 'todos';
-  let currentSearch = '';
-
-  // ── Cargar providers aprobados de Firestore ──
-  async function loadProviders() {
-    try {
-      const q = query(
-        collection(db, "providers"),
-        where("pendiente", "==", false),
-        orderBy("fechaCreacion", "asc")
-      );
-      const snapshot = await getDocs(q);
-      allProviders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      renderProviders();
-    } catch (err) {
-      console.error("Error cargando providers:", err);
-      document.getElementById('providersGrid').innerHTML = `
-        <div class="loading-state" style="grid-column:1/-1">
-          <p>Error al cargar los servicios. Recargá la página.</p>
-        </div>`;
-    }
-  }
-
-  // ── Render ──
-  function renderProviders() {
-    const grid = document.getElementById('providersGrid');
-    const empty = document.getElementById('emptyState');
-    const comingSoon = document.getElementById('comingSoon');
-    const count = document.getElementById('providerCount');
-
-    if (allProviders.length === 0) {
-      grid.innerHTML = '';
-      empty.style.display = 'none';
-      comingSoon.style.display = 'block';
-      count.textContent = '0 servicios';
-      return;
-    }
-
-    let filtered = allProviders.filter(p => {
-      const matchCat = currentCategory === 'todos' || p.category === currentCategory;
-      const matchSearch = !currentSearch ||
-        p.name.toLowerCase().includes(currentSearch) ||
-        p.description.toLowerCase().includes(currentSearch) ||
-        p.category.toLowerCase().includes(currentSearch);
-      return matchCat && matchSearch;
-    });
-
-    count.textContent = `${filtered.length} servicio${filtered.length !== 1 ? 's' : ''}`;
-    comingSoon.style.display = 'none';
-
-    if (filtered.length === 0) {
-      grid.innerHTML = '';
-      empty.style.display = 'block';
-      return;
-    }
-
-    empty.style.display = 'none';
-    grid.innerHTML = filtered.map(p => `
-      <div class="provider-card fade-in" onclick="window._openModal('${p.id}')">
-        <div class="card-image ${p.image ? '' : (p.color || 'color-1')}">
-          ${p.image ? `<img src="${p.image}" alt="${p.name}" />` : `<span>${p.emoji || '🌿'}</span>`}
-          <span class="card-category">${categoryLabel(p.category)}</span>
-        </div>
-        <div class="card-body">
-          <h3>${p.name}</h3>
-          <p>${stripHtml(p.description).substring(0, 90)}${p.description.length > 90 ? '...' : ''}</p>
-          <div class="card-footer">
-            <span class="card-location">📍 ${p.location}</span>
-            <span class="card-contact">Ver más</span>
-          </div>
-        </div>
-      </div>
-    `).join('');
-
-    setTimeout(() => {
-      document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
-    }, 50);
-  }
-
-  function stripHtml(html) {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || '';
-  }
-
-  function categoryLabel(cat) {
-    const labels = {
-      niñeras: 'Niñeras',
-      fotografia: 'Fotografía',
-      salud: 'Salud',
-      ropa: 'Ropa y accesorios',
-      alimentos: 'Alimentos',
-      fiestas: 'Fiestas y Eventos',
-      otros: 'Otros'
-    };
-    return labels[cat] || cat;
-  }
-
-  // ── Exponer funciones al scope global ──
-  window._openModal = function(id) {
-    const p = allProviders.find(x => x.id === id);
-    if (!p) return;
-
-    const modalHeader = document.getElementById('modalHeader');
-    modalHeader.className = `modal-header ${p.image ? '' : (p.color || 'color-1')}`;
-    if (p.image) {
-      modalHeader.style.background = 'white';
-      document.getElementById('modalEmoji').innerHTML = `
-        <div style="border:2px solid #e2d8cc;border-radius:16px;padding:16px;background:white;display:flex;align-items:center;justify-content:center">
-          <img src="${p.image}" alt="${p.name}" style="max-height:130px;max-width:200px;object-fit:contain" />
-        </div>`;
-    } else {
-      modalHeader.style.background = '';
-      document.getElementById('modalEmoji').textContent = p.emoji || '🌿';
-    }
-
-    document.getElementById('modalCat').textContent = categoryLabel(p.category);
-    document.getElementById('modalName').textContent = p.name;
-    document.getElementById('modalDesc').innerHTML = p.description;
-    document.getElementById('modalInfo').innerHTML = `
-      <div class="modal-info-row"><span class="label">📍 Zona</span><span>${p.location}</span></div>
-      ${p.instagram ? `<div class="modal-info-row">
-        <span class="label">Instagram</span>
-        <a href="https://instagram.com/${p.instagram.replace('@','')}" target="_blank" style="color:var(--green-mid)">${p.instagram}</a>
-      </div>` : ''}
-    `;
-
-    const contactBtn = document.getElementById('modalContact');
-    if (p.noWhatsapp && p.instagram) {
-      contactBtn.href = `https://instagram.com/${p.instagram.replace('@', '')}`;
-      contactBtn.textContent = 'Ver en Instagram';
-    } else {
-      contactBtn.href = `https://wa.me/54${p.whatsapp}?text=Hola! Te contacto desde Criar Cerca 🌿`;
-      contactBtn.textContent = 'Contactar por WhatsApp';
-    }
-
-    document.getElementById('modalOverlay').classList.add('active');
-    document.body.style.overflow = 'hidden';
-  };
-
-  window.setCategory = function(cat, btn) {
-    currentCategory = cat;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    history.replaceState(null, '', cat === 'todos' ? window.location.pathname : '?cat=' + encodeURIComponent(cat));
-    renderProviders();
-  };
-
-  window.filterProviders = function() {
-    currentSearch = document.getElementById('searchInput').value.toLowerCase();
-    renderProviders();
-  };
-
-  window.closeModal = function(e) {
-    if (e.target === document.getElementById('modalOverlay')) window.closeModalBtn();
-  };
-
-  window.closeModalBtn = function() {
-    document.getElementById('modalOverlay').classList.remove('active');
-    document.body.style.overflow = '';
-  };
-
-  // ── Cloudinary upload ──
-  const CLOUDINARY_CLOUD = 'duyyacpk0';
-  const CLOUDINARY_PRESET = 'criar-cerca';
-  let selectedImageFile = null;
-  let uploadedImageUrl = '';
-
-  window.handleImageSelect = function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      alert('La imagen no puede superar los 5MB.');
-      return;
-    }
-    selectedImageFile = file;
-    const reader = new FileReader();
-    reader.onload = e => {
-      document.getElementById('uploadPlaceholder').style.display = 'none';
-      document.getElementById('uploadPreview').style.display = 'flex';
-      document.getElementById('previewImg').src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  };
-
-  window.removeImage = function(e) {
-    e.stopPropagation();
-    selectedImageFile = null;
-    uploadedImageUrl = '';
-    document.getElementById('logoInput').value = '';
-    document.getElementById('uploadPlaceholder').style.display = 'flex';
-    document.getElementById('uploadPreview').style.display = 'none';
-  };
-
-  async function uploadToCloudinary(file) {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', CLOUDINARY_PRESET);
-
-    document.getElementById('uploadProgress').style.display = 'block';
-    document.getElementById('uploadStatus').textContent = 'Subiendo imagen...';
-
-    const xhr = new XMLHttpRequest();
-    xhr.upload.onprogress = e => {
-      if (e.lengthComputable) {
-        const pct = Math.round((e.loaded / e.total) * 100);
-        document.getElementById('uploadBarFill').style.width = pct + '%';
-        document.getElementById('uploadStatus').textContent = `Subiendo... ${pct}%`;
-      }
-    };
-
-    return new Promise((resolve, reject) => {
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          const data = JSON.parse(xhr.responseText);
-          document.getElementById('uploadStatus').textContent = '✅ Imagen subida';
-          resolve(data.secure_url);
-        } else {
-          reject(new Error('Error al subir la imagen'));
-        }
-      };
-      xhr.onerror = () => reject(new Error('Error de conexión'));
-      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`);
-      xhr.send(formData);
-    });
-  }
-
-  // ── Formulario → guarda en Firestore ──
-  window.submitForm = async function() {
-    const nombre = document.getElementById('nombre').value.trim();
-    const negocio = document.getElementById('negocio').value.trim();
-    const categoria = document.getElementById('categoria').value;
-    const whatsapp = document.getElementById('whatsapp').value.trim();
-    const descripcion = document.getElementById('descripcion').value.trim();
-    const instagram = document.getElementById('instagram').value.trim();
-
-    if (!nombre || !negocio || !categoria || !whatsapp || !descripcion) {
-      alert('Por favor completá todos los campos obligatorios.');
-      return;
-    }
-
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.textContent = 'Enviando...';
-
-    try {
-      // Subir imagen a Cloudinary si hay una seleccionada
-      if (selectedImageFile) {
-        btn.textContent = 'Subiendo imagen...';
-        uploadedImageUrl = await uploadToCloudinary(selectedImageFile);
-      }
-
-      // Guardar en Firestore
-      await addDoc(collection(db, "solicitudes"), {
-        nombre,
-        negocio,
-        categoria,
-        whatsapp,
-        instagram,
-        descripcion,
-        image: uploadedImageUrl || '',
-        pendiente: true,
-        fechaSolicitud: new Date().toISOString()
-      });
-
-      // Notificar por mail
-      try {
-        await emailjs.send("service_jg3hhda", "template_t8uvvkl", {
-          negocio: negocio,
-          nombre: nombre,
-          categoria: categoria,
-          whatsapp: whatsapp,
-          instagram: instagram,
-          descripcion: descripcion,
-          to_email: "andreatoyos@hotmail.com"
-        });
-      } catch(mailErr) {
-        console.warn('Email no enviado:', mailErr);
-      }
-
-      document.getElementById('formContent').style.display = 'none';
-      document.getElementById('formSuccess').style.display = 'block';
-    } catch (err) {
-      console.error("Error:", err);
-      alert('Hubo un error al enviar tu solicitud. Por favor intentá de nuevo.');
-      btn.disabled = false;
-      btn.textContent = 'Quiero aparecer en el directorio 🌿';
-      document.getElementById('uploadProgress').style.display = 'none';
-    }
-  };
-
-  // ── Search con Enter ──
-  document.getElementById('searchInput').addEventListener('keyup', e => {
-    if (e.key === 'Enter') window.filterProviders();
-  });
-
-  // ── Leer ?cat= al cargar ──
-  (function() {
-    const params = new URLSearchParams(window.location.search);
-    const cat = params.get('cat');
-    if (cat) {
-      document.querySelectorAll('.filter-btn').forEach(btn => {
-        const onclick = btn.getAttribute('onclick') || '';
-        if (onclick.includes(`'${cat}'`)) {
-          currentCategory = cat;
-          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-        }
-      });
-    }
-  })();
-
-  // ── Scroll animations ──
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-  // ── Init ──
-  loadProviders();
-</script>
 </body>
 </html>

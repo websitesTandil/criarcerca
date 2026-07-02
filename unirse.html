@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<link rel="icon" type="image/x-icon" href="assets/img/favicon.ico">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Publicá tu negocio — Criar Cerca</title>
+<meta name="description" content="¿Tenés un negocio o servicio para familias en Tandil y zona? Publicá gratis en Criar Cerca y llegá a cientos de familias." />
+<meta name="keywords" content="publicar negocio Tandil, directorio familias Tandil, criar cerca" />
+<meta name="author" content="Criar Cerca" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://www.criarcerca.com.ar/unirse.html" />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.criarcerca.com.ar/unirse.html" />
+<meta property="og:title" content="Publicá tu negocio — Criar Cerca" />
+<meta property="og:description" content="Publicá gratis tu negocio o servicio y llegá a cientos de familias de Tandil y zona." />
+<meta property="og:image" content="https://www.criarcerca.com.ar/assets/img/logo.png" />
+<meta property="og:locale" content="es_AR" />
+<meta property="og:site_name" content="Criar Cerca" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Publicá tu negocio — Criar Cerca" />
+<meta name="twitter:description" content="Publicá gratis tu negocio o servicio y llegá a cientos de familias de Tandil y zona." />
+<meta name="twitter:image" content="https://www.criarcerca.com.ar/assets/img/logo.png" />
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  (function() { emailjs.init("FGL1azSVkTW9ot4NP"); })();
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4E7W0PR5W"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S4E7W0PR5W');
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a href="index.html" class="logo">Criar <span>Cerca</span></a>
+  <nav>
+    <a href="servicios.html">Servicios</a>
+    <a href="unirse.html">Publicá tu negocio</a>
+    <a href="https://www.instagram.com/criar.cerca" target="_blank">Instagram</a>
+  </nav>
+</header>
+
+<!-- FORM -->
+<section class="form-section">
+  <h2>¿Tenés un negocio o servicio?</h2>
+  <p>Publicá gratis y llegá a cientos de familias de Tandil y zona</p>
+  <div class="form-container fade-in">
+    <div id="formContent">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" id="nombre" placeholder="Tu nombre" />
+        </div>
+        <div class="form-group">
+          <label>Negocio / Servicio</label>
+          <input type="text" id="negocio" placeholder="Ej: Fotos de bebés" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Categoría</label>
+        <select id="categoria">
+          <option value="">Seleccioná una categoría</option>
+          <option value="niñeras">👶 Niñeras / Cuidado</option>
+          <option value="fotografia">📸 Fotografía</option>
+          <option value="salud">💚 Salud / Bienestar / Estimulación</option>
+          <option value="ropa">🧸 Ropa y accesorios</option>
+          <option value="alimentos">🥗 Alimentos</option>
+          <option value="fiestas">🎉 Fiestas y Eventos</option>
+          <option value="otros">✨ Otros</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>WhatsApp</label>
+          <input type="text" id="whatsapp" placeholder="Ej: 2494 000000" />
+        </div>
+        <div class="form-group">
+          <label>Instagram (opcional)</label>
+          <input type="text" id="instagram" placeholder="@tunombre" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Contanos qué ofrecés</label>
+        <textarea id="descripcion" placeholder="Describí brevemente tu servicio, zona de atención, etc."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Logo o foto de tu negocio <span style="font-weight:300;text-transform:none;letter-spacing:0">(opcional)</span></label>
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('logoInput').click()">
+          <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="handleImageSelect(event)" />
+          <div id="uploadPlaceholder">
+            <span style="font-size:2rem;">📷</span>
+            <p>Tocá para subir tu logo o foto</p>
+            <p style="font-size:0.75rem;opacity:0.6;">JPG, PNG o WebP · Máx 5MB</p>
+          </div>
+          <div id="uploadPreview" style="display:none">
+            <img id="previewImg" src="" alt="Preview" />
+            <button type="button" onclick="removeImage(event)">✕ Cambiar imagen</button>
+          </div>
+        </div>
+        <div id="uploadProgress" style="display:none">
+          <div class="upload-bar"><div class="upload-bar-fill" id="uploadBarFill"></div></div>
+          <p id="uploadStatus">Subiendo imagen...</p>
+        </div>
+      </div>
+      <button class="btn-submit" id="submitBtn" onclick="submitForm()">Quiero aparecer en el directorio 🌿</button>
+    </div>
+    <div class="form-success" id="formSuccess">
+      <div class="icon">💚</div>
+      <h3>¡Gracias por sumarte!</h3>
+      <p>Recibimos tu información, próximamente estará publicado en la web.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Criar <span>Cerca</span></div>
+  <p>El directorio de familias de Tandil y zona</p>
+  <p><a href="https://www.instagram.com/criar.cerca" target="_blank">@criar.cerca</a></p>
+</footer>
+
+<!-- ══════════════════════════════════════════════
+     FIREBASE — solo cambiar firebaseConfig si es necesario
+     ══════════════════════════════════════════════ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc
+  } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC0sxBnKRIfwMDQrELvyYWOYtTHx2oQ5CM",
+    authDomain: "criar-cerca.firebaseapp.com",
+    projectId: "criar-cerca",
+    storageBucket: "criar-cerca.firebasestorage.app",
+    messagingSenderId: "217825387626",
+    appId: "1:217825387626:web:b25f3683d7783b9dead613",
+    measurementId: "G-S4E7W0PR5W"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ── Cloudinary upload ──
+  const CLOUDINARY_CLOUD = 'duyyacpk0';
+  const CLOUDINARY_PRESET = 'criar-cerca';
+  let selectedImageFile = null;
+  let uploadedImageUrl = '';
+
+  window.handleImageSelect = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert('La imagen no puede superar los 5MB.');
+      return;
+    }
+    selectedImageFile = file;
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('uploadPlaceholder').style.display = 'none';
+      document.getElementById('uploadPreview').style.display = 'flex';
+      document.getElementById('previewImg').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.removeImage = function(e) {
+    e.stopPropagation();
+    selectedImageFile = null;
+    uploadedImageUrl = '';
+    document.getElementById('logoInput').value = '';
+    document.getElementById('uploadPlaceholder').style.display = 'flex';
+    document.getElementById('uploadPreview').style.display = 'none';
+  };
+
+  async function uploadToCloudinary(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_PRESET);
+
+    document.getElementById('uploadProgress').style.display = 'block';
+    document.getElementById('uploadStatus').textContent = 'Subiendo imagen...';
+
+    const xhr = new XMLHttpRequest();
+    xhr.upload.onprogress = e => {
+      if (e.lengthComputable) {
+        const pct = Math.round((e.loaded / e.total) * 100);
+        document.getElementById('uploadBarFill').style.width = pct + '%';
+        document.getElementById('uploadStatus').textContent = `Subiendo... ${pct}%`;
+      }
+    };
+
+    return new Promise((resolve, reject) => {
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          const data = JSON.parse(xhr.responseText);
+          document.getElementById('uploadStatus').textContent = '✅ Imagen subida';
+          resolve(data.secure_url);
+        } else {
+          reject(new Error('Error al subir la imagen'));
+        }
+      };
+      xhr.onerror = () => reject(new Error('Error de conexión'));
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`);
+      xhr.send(formData);
+    });
+  }
+
+  // ── Formulario → guarda en Firestore ──
+  window.submitForm = async function() {
+    const nombre = document.getElementById('nombre').value.trim();
+    const negocio = document.getElementById('negocio').value.trim();
+    const categoria = document.getElementById('categoria').value;
+    const whatsapp = document.getElementById('whatsapp').value.trim();
+    const descripcion = document.getElementById('descripcion').value.trim();
+    const instagram = document.getElementById('instagram').value.trim();
+
+    if (!nombre || !negocio || !categoria || !whatsapp || !descripcion) {
+      alert('Por favor completá todos los campos obligatorios.');
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    try {
+      // Subir imagen a Cloudinary si hay una seleccionada
+      if (selectedImageFile) {
+        btn.textContent = 'Subiendo imagen...';
+        uploadedImageUrl = await uploadToCloudinary(selectedImageFile);
+      }
+
+      // Guardar en Firestore
+      await addDoc(collection(db, "solicitudes"), {
+        nombre,
+        negocio,
+        categoria,
+        whatsapp,
+        instagram,
+        descripcion,
+        image: uploadedImageUrl || '',
+        pendiente: true,
+        fechaSolicitud: new Date().toISOString()
+      });
+
+      // Notificar por mail
+      try {
+        await emailjs.send("service_jg3hhda", "template_t8uvvkl", {
+          negocio: negocio,
+          nombre: nombre,
+          categoria: categoria,
+          whatsapp: whatsapp,
+          instagram: instagram,
+          descripcion: descripcion,
+          to_email: "andreatoyos@hotmail.com"
+        });
+      } catch(mailErr) {
+        console.warn('Email no enviado:', mailErr);
+      }
+
+      document.getElementById('formContent').style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+    } catch (err) {
+      console.error("Error:", err);
+      alert('Hubo un error al enviar tu solicitud. Por favor intentá de nuevo.');
+      btn.disabled = false;
+      btn.textContent = 'Quiero aparecer en el directorio 🌿';
+      document.getElementById('uploadProgress').style.display = 'none';
+    }
+  };
+
+  // ── Scroll animations ──
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
