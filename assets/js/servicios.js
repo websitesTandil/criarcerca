@@ -108,10 +108,29 @@ function categoryLabel(cat) {
   return labels[cat] || cat;
 }
 
+// ── Tracking (Google Analytics) ──
+function trackProviderView(provider) {
+  if (typeof gtag !== 'function') return;
+  gtag('event', 'ver_proveedor', {
+    proveedor_nombre: provider.name,
+    proveedor_categoria: provider.category,
+  });
+}
+
+function trackProviderContact(provider) {
+  if (typeof gtag !== 'function') return;
+  gtag('event', 'contacto_proveedor', {
+    proveedor_nombre: provider.name,
+    proveedor_categoria: provider.category,
+  });
+}
+
 // ── Exponer funciones al scope global ──
 window._openModal = function(id) {
   const p = allProviders.find(x => x.id === id);
   if (!p) return;
+
+  trackProviderView(p);
 
   const modalHeader = document.getElementById('modalHeader');
   modalHeader.className = `modal-header ${p.image ? '' : (p.color || 'color-1')}`;
@@ -145,6 +164,7 @@ window._openModal = function(id) {
     contactBtn.href = `https://wa.me/54${p.whatsapp}?text=Hola! Te contacto desde Criar Cerca 🌿`;
     contactBtn.textContent = 'Contactar por WhatsApp';
   }
+  contactBtn.onclick = () => trackProviderContact(p);
 
   document.getElementById('modalOverlay').classList.add('active');
   document.body.style.overflow = 'hidden';
