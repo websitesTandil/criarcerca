@@ -160,11 +160,26 @@ window._openModal = function(id) {
   if (p.noWhatsapp && p.instagram) {
     contactBtn.href = `https://instagram.com/${p.instagram.replace('@', '')}`;
     contactBtn.textContent = 'Ver en Instagram';
+    contactBtn.onclick = () => {
+      if (typeof gtag !== 'function') return;
+      gtag('event', 'contacto_proveedor', {
+        proveedor_nombre: p.name,
+        proveedor_categoria: p.category,
+        canal_contacto: 'instagram',
+      });
+    };
   } else {
     contactBtn.href = `https://wa.me/54${p.whatsapp}?text=Hola! Te contacto desde Criar Cerca 🌿`;
     contactBtn.textContent = 'Contactar por WhatsApp';
+    contactBtn.onclick = () => {
+      if (typeof gtag !== 'function') return;
+      gtag('event', 'contacto_proveedor', {
+        proveedor_nombre: p.name,
+        proveedor_categoria: p.category,
+        canal_contacto: 'whatsapp',
+      });
+    };
   }
-  contactBtn.onclick = () => trackProviderContact(p);
 
   document.getElementById('modalOverlay').classList.add('active');
   document.body.style.overflow = 'hidden';
