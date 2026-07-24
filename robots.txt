@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /gestion-cc.html
+Disallow: /.git/
+
+# Crawl-delay para no sobrecargar servidor
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://www.criarcerca.com.ar/sitemap.xml
