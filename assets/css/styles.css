@@ -159,7 +159,7 @@
     border-bottom: 1px solid var(--sand);
   }
 
-  .search-section h2 {
+  .search-section h1 {
     font-family: 'Playfair Display', serif;
     font-size: 1.8rem;
     color: var(--green-deep);
@@ -455,7 +455,7 @@
     border-radius: 50%;
   }
 
-  .form-section h2 {
+  .form-section h1 {
     font-family: 'Playfair Display', serif;
     font-size: clamp(1.8rem, 4vw, 2.5rem);
     color: var(--cream);
