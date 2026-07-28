@@ -77,11 +77,12 @@ window.submitForm = async function() {
   const nombre = document.getElementById('nombre').value.trim();
   const negocio = document.getElementById('negocio').value.trim();
   const categoria = document.getElementById('categoria').value;
+  const ubicacion = document.getElementById('ubicacion').value.trim();
   const whatsapp = document.getElementById('whatsapp').value.trim();
   const descripcion = document.getElementById('descripcion').value.trim();
   const instagram = document.getElementById('instagram').value.trim();
 
-  if (!nombre || !negocio || !categoria || !whatsapp || !descripcion) {
+  if (!nombre || !negocio || !categoria || !ubicacion || !whatsapp || !descripcion) {
     alert('Por favor completá todos los campos obligatorios.');
     return;
   }
@@ -102,6 +103,7 @@ window.submitForm = async function() {
       nombre,
       negocio,
       categoria,
+      location: ubicacion,
       whatsapp,
       instagram,
       descripcion,
@@ -116,6 +118,7 @@ window.submitForm = async function() {
         negocio: negocio,
         nombre: nombre,
         categoria: categoria,
+        ubicacion: ubicacion,
         whatsapp: whatsapp,
         instagram: instagram,
         descripcion: descripcion,

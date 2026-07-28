@@ -104,7 +104,8 @@
       <div class="form-row">
         <div class="form-group">
           <label>Nombre</label>
-          <input type="text" id="nombre" placeholder="Tu nombre" />
+          <p class="field-hint">Puede ser tu nombre o el del emprendimiento</p>
+          <input type="text" id="nombre" placeholder="Ej: María López o Deco Bebé" />
         </div>
         <div class="form-group">
           <label>Negocio / Servicio</label>
@@ -123,6 +124,11 @@
           <option value="fiestas">🎉 Fiestas y Eventos</option>
           <option value="otros">✨ Otros</option>
         </select>
+      </div>
+      <div class="form-group">
+        <label>Ubicación</label>
+        <p class="field-hint">Podés poner solo la ciudad, no hace falta la dirección exacta</p>
+        <input type="text" id="ubicacion" placeholder="Ej: Tandil" />
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -181,6 +187,16 @@
   </svg>
 </a>
 
+<!-- Respaldo: si el módulo JS no llega a correr, mostramos igual el formulario -->
+<script>
+  window.addEventListener('load', function () {
+    setTimeout(function () {
+      document.querySelectorAll('.fade-in:not(.visible)').forEach(function (el) {
+        el.classList.add('visible');
+      });
+    }, 500);
+  });
+</script>
 <script type="module" src="assets/js/unirse.js"></script>
 </body>
 </html>

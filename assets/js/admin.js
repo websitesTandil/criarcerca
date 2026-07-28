@@ -83,9 +83,9 @@ async function loadSolicitudes() {
         ${s.image ? `<div class="card-thumb"><img src="${s.image}" alt="${s.negocio}" /></div>` : ''}
         <div class="card-info">
           <div class="card-badge">${s.categoria}</div>
-          <div class="card-name">${s.negocio} — ${s.nombre}</div>
+          <div class="card-name">${s.nombre || s.negocio}${s.negocio ? ` — ${s.negocio}` : ''}</div>
           <div class="card-meta">
-            📱 ${s.whatsapp}
+            ${s.location ? `📍 ${s.location} · ` : ''}📱 ${s.whatsapp}
             ${s.instagram ? ` · 📸 ${s.instagram}` : ''}
             · 📅 ${new Date(s.fechaSolicitud).toLocaleDateString('es-AR')}
           </div>
@@ -123,7 +123,7 @@ async function loadPublicados() {
       <div class="card" id="pub-${p.id}">
         <div class="card-info">
           <div class="card-badge">${p.category}</div>
-          <div class="card-name">${p.name}</div>
+          <div class="card-name">${p.name}${p.negocio ? ` — ${p.negocio}` : ''}</div>
           <div class="card-meta">
             📍 ${p.location}
             ${p.whatsapp ? ` · 📱 ${p.whatsapp}` : ''}
@@ -155,10 +155,11 @@ window._aprobar = function(id, data) {
 
   document.getElementById('editModalTitle').textContent = 'Completar y publicar';
   document.getElementById('btnSaveModal').textContent = 'Publicar en el directorio ✓';
-  document.getElementById('editNombre').value = data.negocio || '';
+  document.getElementById('editNombre').value = data.nombre || data.negocio || '';
+  document.getElementById('editNegocio').value = data.negocio || '';
   document.getElementById('editCategoria').value = data.categoria || 'otros';
   document.getElementById('editDescripcion').value = data.descripcion || '';
-  document.getElementById('editLocation').value = 'Tandil';
+  document.getElementById('editLocation').value = data.location || 'Tandil';
   document.getElementById('editWhatsapp').value = data.whatsapp || '';
   document.getElementById('editInstagram').value = data.instagram || '';
   document.getElementById('editImage').value = data.image || '';
@@ -182,6 +183,7 @@ window._editarPublicado = function(id, data) {
   document.getElementById('editModalTitle').textContent = 'Editar servicio';
   document.getElementById('btnSaveModal').textContent = 'Guardar cambios';
   document.getElementById('editNombre').value = data.name || '';
+  document.getElementById('editNegocio').value = data.negocio || '';
   document.getElementById('editCategoria').value = data.category || 'otros';
   document.getElementById('editDescripcion').value = data.description || '';
   document.getElementById('editLocation').value = data.location || '';
@@ -199,6 +201,7 @@ window.saveModal = async function() {
 
   const providerData = {
     name: document.getElementById('editNombre').value.trim(),
+    negocio: document.getElementById('editNegocio').value.trim(),
     category: document.getElementById('editCategoria').value,
     description: document.getElementById('editDescripcion').value.trim(),
     location: document.getElementById('editLocation').value.trim(),
