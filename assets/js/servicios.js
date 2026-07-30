@@ -117,11 +117,12 @@ function trackProviderView(provider) {
   });
 }
 
-function trackProviderContact(provider) {
+function trackProviderContact(provider, canal) {
   if (typeof gtag !== 'function') return;
   gtag('event', 'contacto_proveedor', {
     proveedor_nombre: provider.name,
     proveedor_categoria: provider.category,
+    canal_contacto: canal,
   });
 }
 
@@ -160,25 +161,11 @@ window._openModal = function(id) {
   if (p.noWhatsapp && p.instagram) {
     contactBtn.href = `https://instagram.com/${p.instagram.replace('@', '')}`;
     contactBtn.textContent = 'Ver en Instagram';
-    contactBtn.onclick = () => {
-      if (typeof gtag !== 'function') return;
-      gtag('event', 'contacto_proveedor', {
-        proveedor_nombre: p.name,
-        proveedor_categoria: p.category,
-        canal_contacto: 'instagram',
-      });
-    };
+    contactBtn.onclick = () => trackProviderContact(p, 'instagram');
   } else {
     contactBtn.href = `https://wa.me/54${p.whatsapp}?text=Hola! Te contacto desde Criar Cerca 🌿`;
     contactBtn.textContent = 'Contactar por WhatsApp';
-    contactBtn.onclick = () => {
-      if (typeof gtag !== 'function') return;
-      gtag('event', 'contacto_proveedor', {
-        proveedor_nombre: p.name,
-        proveedor_categoria: p.category,
-        canal_contacto: 'whatsapp',
-      });
-    };
+    contactBtn.onclick = () => trackProviderContact(p, 'whatsapp');
   }
 
   document.getElementById('modalOverlay').classList.add('active');
