@@ -127,6 +127,12 @@ function trackProviderContact(provider, canal) {
 }
 
 // ── Exponer funciones al scope global ──
+window._trackInstagramLink = function(id) {
+  const p = allProviders.find(x => x.id === id);
+  if (!p) return;
+  trackProviderContact(p, 'instagram');
+};
+
 window._openModal = function(id) {
   const p = allProviders.find(x => x.id === id);
   if (!p) return;
@@ -153,7 +159,7 @@ window._openModal = function(id) {
     <div class="modal-info-row"><span class="label">📍 Zona</span><span>${p.location}</span></div>
     ${p.instagram ? `<div class="modal-info-row">
       <span class="label">Instagram</span>
-      <a href="https://instagram.com/${p.instagram.replace('@','')}" target="_blank" style="color:var(--green-mid)">${p.instagram}</a>
+      <a href="https://instagram.com/${p.instagram.replace('@','')}" target="_blank" style="color:var(--green-mid)" onclick="window._trackInstagramLink('${p.id}')">${p.instagram}</a>
     </div>` : ''}
   `;
 
