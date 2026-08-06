@@ -4,6 +4,7 @@ import {
   query, where, orderBy
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./config.js";
+import { CATEGORIES, categoryLabel } from "./categories.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -95,17 +96,10 @@ function stripHtml(html) {
   return tmp.textContent || tmp.innerText || '';
 }
 
-function categoryLabel(cat) {
-  const labels = {
-    niñeras: 'Niñeras',
-    fotografia: 'Fotografía',
-    salud: 'Salud',
-    ropa: 'Ropa y accesorios',
-    alimentos: 'Alimentos',
-    fiestas: 'Fiestas y Eventos',
-    otros: 'Otros'
-  };
-  return labels[cat] || cat;
+function renderCategoryFilters() {
+  document.getElementById('categoryFilters').insertAdjacentHTML('beforeend',
+    CATEGORIES.map(c => `<button class="filter-btn" onclick="setCategory('${c.value}', this)">${c.emoji} ${c.label}</button>`).join('')
+  );
 }
 
 // ── Tracking (Google Analytics) ──
@@ -204,6 +198,9 @@ window.closeModalBtn = function() {
 document.getElementById('searchInput').addEventListener('keyup', e => {
   if (e.key === 'Enter') window.filterProviders();
 });
+
+// ── Pintar filtros de categoría ──
+renderCategoryFilters();
 
 // ── Leer ?cat= al cargar ──
 (function() {

@@ -8,11 +8,17 @@ import {
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import { firebaseConfig } from "./config.js";
+import { CATEGORIES, categoryLabel } from "./categories.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
+
+// ── Pintar opciones de categoría ──
+document.getElementById('editCategoria').insertAdjacentHTML('beforeend',
+  CATEGORIES.map(c => `<option value="${c.value}">${c.emoji} ${c.label}</option>`).join('')
+);
 
 let currentEditId = null;
 let currentEditCollection = null;
@@ -82,7 +88,7 @@ async function loadSolicitudes() {
       <div class="card" id="sol-${s.id}">
         ${s.image ? `<div class="card-thumb"><img src="${s.image}" alt="${s.negocio}" /></div>` : ''}
         <div class="card-info">
-          <div class="card-badge">${s.categoria}</div>
+          <div class="card-badge">${categoryLabel(s.categoria)}</div>
           <div class="card-name">${s.nombre || s.negocio}${s.negocio ? ` — ${s.negocio}` : ''}</div>
           <div class="card-meta">
             ${s.location ? `📍 ${s.location} · ` : ''}📱 ${s.whatsapp}
@@ -122,7 +128,7 @@ async function loadPublicados() {
     lista.innerHTML = docs.map(p => `
       <div class="card" id="pub-${p.id}">
         <div class="card-info">
-          <div class="card-badge">${p.category}</div>
+          <div class="card-badge">${categoryLabel(p.category)}</div>
           <div class="card-name">${p.name}${p.negocio ? ` — ${p.negocio}` : ''}</div>
           <div class="card-meta">
             📍 ${p.location}
