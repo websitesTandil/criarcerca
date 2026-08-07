@@ -10,7 +10,7 @@ emailjs.init(emailjsConfig.publicKey);
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ── Pintar opciones de categoría ──
+// ── Pintar opciones de categoría  ──
 document.getElementById('categoria').insertAdjacentHTML('beforeend',
   CATEGORIES.map(c => `<option value="${c.value}">${c.emoji} ${c.label}</option>`).join('')
 );
