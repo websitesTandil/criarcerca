@@ -117,6 +117,7 @@ function trackProviderContact(provider, canal) {
     proveedor_nombre: provider.name,
     proveedor_categoria: provider.category,
     canal_contacto: canal,
+    traffic_source: document.referrer ? new URL(document.referrer).hostname : '(direct)'
   });
 }
 
