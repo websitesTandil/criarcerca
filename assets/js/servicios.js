@@ -5,6 +5,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./config.js";
 import { CATEGORIES, categoryLabel } from "./categories.js";
+import { providerCardHtml, setupModal, observeFadeIns } from "./directory-common.js";
+import { mountPartials } from "./partials.js";
+
+mountPartials('');
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -68,32 +72,11 @@ function renderProviders() {
   }
 
   empty.style.display = 'none';
-  grid.innerHTML = filtered.map(p => `
-    <div class="provider-card fade-in" onclick="window._openModal('${p.id}')">
-      <div class="card-image ${p.image ? '' : (p.color || 'color-1')}">
-        ${p.image ? `<img src="${p.image}" alt="${p.name}" />` : `<span>${p.emoji || '🌿'}</span>`}
-        <span class="card-category">${categoryLabel(p.category)}</span>
-      </div>
-      <div class="card-body">
-        <h3>${p.name}</h3>
-        <p>${stripHtml(p.description).substring(0, 90)}${p.description.length > 90 ? '...' : ''}</p>
-        <div class="card-footer">
-          <span class="card-location">📍 ${p.location}</span>
-          <span class="card-contact">Ver más</span>
-        </div>
-      </div>
-    </div>
-  `).join('');
+  grid.innerHTML = filtered.map(providerCardHtml).join('');
 
   setTimeout(() => {
     document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
   }, 50);
-}
-
-function stripHtml(html) {
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  return tmp.textContent || tmp.innerText || '';
 }
 
 function renderCategoryFilters() {
@@ -102,76 +85,8 @@ function renderCategoryFilters() {
   );
 }
 
-// ── Tracking (Google Analytics) ──
-function trackProviderView(provider) {
-  if (typeof gtag !== 'function') return;
-  gtag('event', 'ver_proveedor', {
-    proveedor_nombre: provider.name,
-    proveedor_categoria: provider.category,
-  });
-}
-
-function trackProviderContact(provider, canal) {
-  if (typeof gtag !== 'function') return;
-  gtag('event', 'contacto_proveedor', {
-    proveedor_nombre: provider.name,
-    proveedor_categoria: provider.category,
-    canal_contacto: canal,
-    traffic_source: document.referrer ? new URL(document.referrer).hostname : '(direct)'
-  });
-}
-
-// ── Exponer funciones al scope global ──
-window._trackInstagramLink = function(id) {
-  const p = allProviders.find(x => x.id === id);
-  if (!p) return;
-  trackProviderContact(p, 'instagram');
-};
-
-window._openModal = function(id) {
-  const p = allProviders.find(x => x.id === id);
-  if (!p) return;
-
-  trackProviderView(p);
-
-  const modalHeader = document.getElementById('modalHeader');
-  modalHeader.className = `modal-header ${p.image ? '' : (p.color || 'color-1')}`;
-  if (p.image) {
-    modalHeader.style.background = 'white';
-    document.getElementById('modalEmoji').innerHTML = `
-      <div style="border:2px solid #e2d8cc;border-radius:16px;padding:16px;background:white;display:flex;align-items:center;justify-content:center">
-        <img src="${p.image}" alt="${p.name}" style="max-height:130px;max-width:200px;object-fit:contain" />
-      </div>`;
-  } else {
-    modalHeader.style.background = '';
-    document.getElementById('modalEmoji').textContent = p.emoji || '🌿';
-  }
-
-  document.getElementById('modalCat').textContent = categoryLabel(p.category);
-  document.getElementById('modalName').textContent = p.name;
-  document.getElementById('modalDesc').innerHTML = p.description;
-  document.getElementById('modalInfo').innerHTML = `
-    <div class="modal-info-row"><span class="label">📍 Zona</span><span>${p.location}</span></div>
-    ${p.instagram ? `<div class="modal-info-row">
-      <span class="label">Instagram</span>
-      <a href="https://instagram.com/${p.instagram.replace('@','')}" target="_blank" style="color:var(--green-mid)" onclick="window._trackInstagramLink('${p.id}')">${p.instagram}</a>
-    </div>` : ''}
-  `;
-
-  const contactBtn = document.getElementById('modalContact');
-  if (p.noWhatsapp && p.instagram) {
-    contactBtn.href = `https://instagram.com/${p.instagram.replace('@', '')}`;
-    contactBtn.textContent = 'Ver en Instagram';
-    contactBtn.onclick = () => trackProviderContact(p, 'instagram');
-  } else {
-    contactBtn.href = `https://wa.me/54${p.whatsapp}?text=Hola! Te contacto desde Criar Cerca 🌿`;
-    contactBtn.textContent = 'Contactar por WhatsApp';
-    contactBtn.onclick = () => trackProviderContact(p, 'whatsapp');
-  }
-
-  document.getElementById('modalOverlay').classList.add('active');
-  document.body.style.overflow = 'hidden';
-};
+// ── Modal + tracking (compartido con las páginas de categoría) ──
+setupModal(id => allProviders.find(x => x.id === id));
 
 window.setCategory = function(cat, btn) {
   currentCategory = cat;
@@ -184,15 +99,6 @@ window.setCategory = function(cat, btn) {
 window.filterProviders = function() {
   currentSearch = document.getElementById('searchInput').value.toLowerCase();
   renderProviders();
-};
-
-window.closeModal = function(e) {
-  if (e.target === document.getElementById('modalOverlay')) window.closeModalBtn();
-};
-
-window.closeModalBtn = function() {
-  document.getElementById('modalOverlay').classList.remove('active');
-  document.body.style.overflow = '';
 };
 
 // ── Search con Enter ──
@@ -220,10 +126,7 @@ renderCategoryFilters();
 })();
 
 // ── Scroll animations ──
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1 });
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+observeFadeIns();
 
 // ── Init ──
 loadProviders();
