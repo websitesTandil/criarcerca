@@ -18,6 +18,9 @@ const CATEGORY_PAGES = {
 function headerHtml(basePath) {
   return `
     <a href="${basePath}index.html" class="logo">Criar <span>Cerca</span></a>
+    <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
     <nav>
       <a href="${basePath}servicios.html">Servicios</a>
       <a href="${basePath}unirse.html">Unirse</a>
