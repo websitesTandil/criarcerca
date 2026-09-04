@@ -3,6 +3,7 @@ export const CATEGORIES = [
   { value: 'fiestas', emoji: '🎉', label: 'Fiestas y Eventos' },
   { value: 'fotografia', emoji: '📸', label: 'Fotografía' },
   { value: 'guarderias', emoji: '🏫', label: 'Jardines maternales/Talleres' },
+  { value: 'juguetes', emoji: '🧩', label: 'Juguetes y Libros' },
   { value: 'niñeras', emoji: '👶', label: 'Niñeras' },
   { value: 'otros', emoji: '✨', label: 'Otros' },
   { value: 'ropa', emoji: '🧸', label: 'Ropa y accesorios' },

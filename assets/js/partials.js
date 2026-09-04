@@ -12,6 +12,7 @@ const CATEGORY_PAGES = {
   ropa: 'ropa-infantil-tandil.html',
   alimentos: 'alimentos-saludables-tandil.html',
   guarderias: 'jardines-maternales-tandil.html',
+  juguetes: 'juguetes-libros-tandil.html',
   salud: 'salud-infantil-tandil.html',
 };
 
