@@ -188,6 +188,7 @@ window._aprobar = function(id, data) {
   document.getElementById('editLocation').value = data.location || 'Tandil';
   document.getElementById('editWhatsapp').value = data.whatsapp || '';
   document.getElementById('editInstagram').value = data.instagram || '';
+  document.getElementById('editBeneficio').value = data.beneficio || '';
   document.getElementById('editImage').value = data.image || '';
   // Mostrar preview de imagen si existe
   const preview = document.getElementById('editImagePreview');
@@ -216,6 +217,7 @@ window._editarPublicado = function(id, data) {
   document.getElementById('editLocation').value = data.location || '';
   document.getElementById('editWhatsapp').value = data.whatsapp || '';
   document.getElementById('editInstagram').value = data.instagram || '';
+  document.getElementById('editBeneficio').value = data.beneficio || '';
   document.getElementById('editImage').value = data.image || '';
   document.getElementById('editModal').classList.add('active');
 };
@@ -250,6 +252,7 @@ window.saveModal = async function() {
     location: document.getElementById('editLocation').value.trim(),
     whatsapp,
     instagram,
+    beneficio: document.getElementById('editBeneficio').value.trim(),
     image: document.getElementById('editImage').value.trim(),
     color: 'color-1',
     pendiente: false,

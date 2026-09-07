@@ -406,6 +406,18 @@
     text-transform: uppercase;
   }
 
+  .card-benefit {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: rgba(181,96,62,0.92);
+    color: var(--cream);
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+
   .card-body { padding: 20px; }
 
   .card-body h3 {
@@ -770,6 +782,16 @@
     flex-direction: column;
     gap: 8px;
     margin-bottom: 24px;
+  }
+
+  .modal-benefit {
+    background: var(--blush);
+    color: var(--green-deep);
+    font-size: 0.85rem;
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    line-height: 1.5;
   }
 
   .modal-info-row {

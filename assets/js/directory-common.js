@@ -28,6 +28,7 @@ export function providerCardHtml(p) {
       <div class="card-image ${p.image ? '' : (p.color || 'color-1')}">
         ${p.image ? `<img src="${p.image}" alt="${p.name}" />` : `<span>${p.emoji || '🌿'}</span>`}
         <span class="card-category">${displayLabel(p)}</span>
+        ${p.beneficio ? `<span class="card-benefit">🎁 Beneficio</span>` : ''}
       </div>
       <div class="card-body">
         <h3>${p.name}</h3>
@@ -90,6 +91,7 @@ export function setupModal(getProviderById) {
     document.getElementById('modalName').textContent = p.name;
     document.getElementById('modalDesc').innerHTML = p.description;
     document.getElementById('modalInfo').innerHTML = `
+      ${p.beneficio ? `<div class="modal-benefit">🎁 <strong>Beneficio por contactarlo desde Criar Cerca:</strong> ${p.beneficio}</div>` : ''}
       <div class="modal-info-row"><span class="label">📍 Zona</span><span>${p.location}</span></div>
       ${p.instagram ? `<div class="modal-info-row">
         <span class="label">Instagram</span>
