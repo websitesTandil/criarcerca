@@ -79,8 +79,14 @@
       </div>
       <div class="form-group">
         <label>Categoría</label>
-        <select id="categoria">
+        <select id="categoria" onchange="updateSubcategoria()">
           <option value="">Seleccioná una categoría</option>
+        </select>
+      </div>
+      <div class="form-group" id="subcategoriaGroup" style="display:none">
+        <label>¿Qué tipo de servicio para fiestas?</label>
+        <select id="subcategoria">
+          <option value="">Seleccioná una opción</option>
         </select>
       </div>
       <div class="form-group">

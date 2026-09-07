@@ -6,6 +6,7 @@ import { CATEGORIES } from "./categories.js";
 // Qué página de /categorias/ corresponde a cada valor de categoría.
 // "otros" no tiene página propia (ver explicación en la conversación).
 const CATEGORY_PAGES = {
+  actividades: 'actividades-talleres-tandil.html',
   'niñeras': 'ninieras-tandil.html',
   fotografia: 'fotografia-bebes-tandil.html',
   fiestas: 'fiestas-infantiles-tandil.html',

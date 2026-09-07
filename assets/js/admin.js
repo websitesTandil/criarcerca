@@ -9,6 +9,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import { firebaseConfig } from "./config.js";
 import { CATEGORIES, categoryLabel } from "./categories.js";
+import { subcategoriesFor, subcategoryLabel } from "./subcategories.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -19,6 +20,24 @@ const provider = new GoogleAuthProvider();
 document.getElementById('editCategoria').insertAdjacentHTML('beforeend',
   CATEGORIES.map(c => `<option value="${c.value}">${c.emoji} ${c.label}</option>`).join('')
 );
+
+// ── Mostrar/pintar subcategoría según la categoría elegida en el modal ──
+window.updateEditSubcategoria = function(preselect = '') {
+  const categoria = document.getElementById('editCategoria').value;
+  const group = document.getElementById('editSubcategoriaGroup');
+  const select = document.getElementById('editSubcategoria');
+  const options = subcategoriesFor(categoria);
+
+  if (options.length === 0) {
+    group.style.display = 'none';
+    select.innerHTML = '';
+    return;
+  }
+
+  group.style.display = 'block';
+  select.innerHTML = options.map(s => `<option value="${s.value}">${s.label}</option>`).join('');
+  if (preselect) select.value = preselect;
+};
 
 let currentEditId = null;
 let currentEditCollection = null;
@@ -88,7 +107,7 @@ async function loadSolicitudes() {
       <div class="card" id="sol-${s.id}">
         ${s.image ? `<div class="card-thumb"><img src="${s.image}" alt="${s.negocio}" /></div>` : ''}
         <div class="card-info">
-          <div class="card-badge">${categoryLabel(s.categoria)}</div>
+          <div class="card-badge">${categoryLabel(s.categoria)}${s.subcategoria ? ' · ' + subcategoryLabel(s.categoria, s.subcategoria) : ''}</div>
           <div class="card-name">${s.nombre || s.negocio}${s.negocio ? ` — ${s.negocio}` : ''}</div>
           <div class="card-meta">
             ${s.location ? `📍 ${s.location} · ` : ''}📱 ${s.whatsapp}
@@ -128,7 +147,7 @@ async function loadPublicados() {
     lista.innerHTML = docs.map(p => `
       <div class="card" id="pub-${p.id}">
         <div class="card-info">
-          <div class="card-badge">${categoryLabel(p.category)}</div>
+          <div class="card-badge">${categoryLabel(p.category)}${p.subcategoria ? ' · ' + subcategoryLabel(p.category, p.subcategoria) : ''}</div>
           <div class="card-name">${p.name}${p.negocio ? ` — ${p.negocio}` : ''}</div>
           <div class="card-meta">
             📍 ${p.location}
@@ -164,6 +183,7 @@ window._aprobar = function(id, data) {
   document.getElementById('editNombre').value = data.nombre || data.negocio || '';
   document.getElementById('editNegocio').value = data.negocio || '';
   document.getElementById('editCategoria').value = data.categoria || 'otros';
+  updateEditSubcategoria(data.subcategoria || '');
   document.getElementById('editDescripcion').value = data.descripcion || '';
   document.getElementById('editLocation').value = data.location || 'Tandil';
   document.getElementById('editWhatsapp').value = data.whatsapp || '';
@@ -191,6 +211,7 @@ window._editarPublicado = function(id, data) {
   document.getElementById('editNombre').value = data.name || '';
   document.getElementById('editNegocio').value = data.negocio || '';
   document.getElementById('editCategoria').value = data.category || 'otros';
+  updateEditSubcategoria(data.subcategoria || '');
   document.getElementById('editDescripcion').value = data.description || '';
   document.getElementById('editLocation').value = data.location || '';
   document.getElementById('editWhatsapp').value = data.whatsapp || '';
@@ -209,6 +230,9 @@ window.saveModal = async function() {
     name: document.getElementById('editNombre').value.trim(),
     negocio: document.getElementById('editNegocio').value.trim(),
     category: document.getElementById('editCategoria').value,
+    subcategoria: document.getElementById('editSubcategoriaGroup').style.display === 'block'
+      ? document.getElementById('editSubcategoria').value
+      : '',
     description: document.getElementById('editDescripcion').value.trim(),
     location: document.getElementById('editLocation').value.trim(),
     whatsapp: document.getElementById('editWhatsapp').value.trim(),

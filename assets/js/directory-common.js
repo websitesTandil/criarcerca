@@ -1,4 +1,9 @@
 import { categoryLabel } from "./categories.js";
+import { subcategoryLabel } from "./subcategories.js";
+
+function displayLabel(p) {
+  return p.subcategoria ? subcategoryLabel(p.category, p.subcategoria) : categoryLabel(p.category);
+}
 
 export function stripHtml(html) {
   const tmp = document.createElement('div');
@@ -11,7 +16,7 @@ export function providerCardHtml(p) {
     <div class="provider-card fade-in" onclick="window._openModal('${p.id}')">
       <div class="card-image ${p.image ? '' : (p.color || 'color-1')}">
         ${p.image ? `<img src="${p.image}" alt="${p.name}" />` : `<span>${p.emoji || '🌿'}</span>`}
-        <span class="card-category">${categoryLabel(p.category)}</span>
+        <span class="card-category">${displayLabel(p)}</span>
       </div>
       <div class="card-body">
         <h3>${p.name}</h3>
@@ -70,7 +75,7 @@ export function setupModal(getProviderById) {
       document.getElementById('modalEmoji').textContent = p.emoji || '🌿';
     }
 
-    document.getElementById('modalCat').textContent = categoryLabel(p.category);
+    document.getElementById('modalCat').textContent = displayLabel(p);
     document.getElementById('modalName').textContent = p.name;
     document.getElementById('modalDesc').innerHTML = p.description;
     document.getElementById('modalInfo').innerHTML = `

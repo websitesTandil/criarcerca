@@ -1,8 +1,9 @@
 export const CATEGORIES = [
+  { value: 'actividades', emoji: '🎨', label: 'Actividades y Talleres' },
   { value: 'alimentos', emoji: '🥗', label: 'Alimentos' },
   { value: 'fiestas', emoji: '🎉', label: 'Fiestas y Eventos' },
   { value: 'fotografia', emoji: '📸', label: 'Fotografía' },
-  { value: 'guarderias', emoji: '🏫', label: 'Jardines maternales/Talleres' },
+  { value: 'guarderias', emoji: '🏫', label: 'Jardines Maternales' },
   { value: 'juguetes', emoji: '🧩', label: 'Juguetes y Libros' },
   { value: 'niñeras', emoji: '👶', label: 'Niñeras' },
   { value: 'otros', emoji: '✨', label: 'Otros' },

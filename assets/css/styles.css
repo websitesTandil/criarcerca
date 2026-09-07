@@ -301,6 +301,30 @@
     color: var(--cream);
   }
 
+  .subcategory-filters {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    margin-bottom: 20px;
+  }
+
+  .subcategory-filters .filter-btn {
+    padding: 6px 14px;
+    font-size: 0.76rem;
+    border-color: var(--terracotta);
+    color: var(--terracotta);
+    background: transparent;
+  }
+
+  .subcategory-filters .filter-btn:hover,
+  .subcategory-filters .filter-btn.active {
+    background: var(--terracotta);
+    border-color: var(--terracotta);
+    color: var(--cream);
+  }
+
   /* ── PROVIDERS GRID ── */
   .providers-section {
     padding: 33px 32px;

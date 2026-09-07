@@ -4,6 +4,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { firebaseConfig, emailjsConfig, cloudinaryConfig } from "./config.js";
 import { CATEGORIES } from "./categories.js";
+import { subcategoriesFor } from "./subcategories.js";
 
 emailjs.init(emailjsConfig.publicKey);
 
@@ -14,6 +15,24 @@ const db = getFirestore(app);
 document.getElementById('categoria').insertAdjacentHTML('beforeend',
   CATEGORIES.map(c => `<option value="${c.value}">${c.emoji} ${c.label}</option>`).join('')
 );
+
+// ── Mostrar subcategoría solo si la categoría elegida tiene ──
+window.updateSubcategoria = function() {
+  const categoria = document.getElementById('categoria').value;
+  const group = document.getElementById('subcategoriaGroup');
+  const select = document.getElementById('subcategoria');
+  const options = subcategoriesFor(categoria);
+
+  if (options.length === 0) {
+    group.style.display = 'none';
+    select.innerHTML = '<option value="">Seleccioná una opción</option>';
+    return;
+  }
+
+  group.style.display = 'block';
+  select.innerHTML = '<option value="">Seleccioná una opción</option>' +
+    options.map(s => `<option value="${s.value}">${s.label}</option>`).join('');
+};
 
 // ── Cloudinary upload ──
 let selectedImageFile = null;
@@ -83,6 +102,7 @@ window.submitForm = async function() {
   const nombre = document.getElementById('nombre').value.trim();
   const negocio = document.getElementById('negocio').value.trim();
   const categoria = document.getElementById('categoria').value;
+  const subcategoria = document.getElementById('subcategoria').value;
   const ubicacion = document.getElementById('ubicacion').value.trim();
   const whatsapp = document.getElementById('whatsapp').value.trim();
   const descripcion = document.getElementById('descripcion').value.trim();
@@ -90,6 +110,11 @@ window.submitForm = async function() {
 
   if (!nombre || !negocio || !categoria || !ubicacion || !whatsapp || !descripcion) {
     alert('Por favor completá todos los campos obligatorios.');
+    return;
+  }
+
+  if (subcategoriesFor(categoria).length > 0 && !subcategoria) {
+    alert('Por favor seleccioná qué tipo de servicio para fiestas ofrecés.');
     return;
   }
 
@@ -109,6 +134,7 @@ window.submitForm = async function() {
       nombre,
       negocio,
       categoria,
+      subcategoria: subcategoria || '',
       location: ubicacion,
       whatsapp,
       instagram,
@@ -124,6 +150,7 @@ window.submitForm = async function() {
         negocio: negocio,
         nombre: nombre,
         categoria: categoria,
+        subcategoria: subcategoria,
         ubicacion: ubicacion,
         whatsapp: whatsapp,
         instagram: instagram,
