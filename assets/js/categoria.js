@@ -6,6 +6,7 @@ import {
 import { firebaseConfig } from "./config.js";
 import { providerCardHtml, setupModal, observeFadeIns } from "./directory-common.js";
 import { mountPartials, mountCategoryPills } from "./partials.js";
+import { subcategoriesFor } from "./subcategories.js";
 
 const CATEGORY = document.body.dataset.category;
 
@@ -16,6 +17,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 let providers = [];
+let currentSubcategory = '';
 
 async function loadProviders() {
   try {
@@ -51,18 +53,53 @@ function renderProviders() {
     return;
   }
 
+  const filtered = currentSubcategory
+    ? providers.filter(p => p.subcategoria === currentSubcategory)
+    : providers;
+
   comingSoon.style.display = 'none';
+  count.textContent = `${filtered.length} servicio${filtered.length !== 1 ? 's' : ''}`;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+
   empty.style.display = 'none';
-  count.textContent = `${providers.length} servicio${providers.length !== 1 ? 's' : ''}`;
-  grid.innerHTML = providers.map(providerCardHtml).join('');
+  grid.innerHTML = filtered.map(providerCardHtml).join('');
 
   setTimeout(() => {
     document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
   }, 50);
 }
 
+function renderSubcategoryFilters() {
+  const wrap = document.getElementById('subcategoryFilters');
+  if (!wrap) return;
+  const options = subcategoriesFor(CATEGORY);
+
+  if (options.length === 0) {
+    wrap.style.display = 'none';
+    return;
+  }
+
+  wrap.style.display = 'flex';
+  wrap.innerHTML =
+    `<button class="filter-btn active" onclick="setSubcategory('', this)">Todas</button>` +
+    options.map(s => `<button class="filter-btn" onclick="setSubcategory('${s.value}', this)">${s.label}</button>`).join('');
+}
+
+window.setSubcategory = function(sub, btn) {
+  currentSubcategory = sub;
+  document.querySelectorAll('#subcategoryFilters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProviders();
+};
+
 setupModal(id => providers.find(x => x.id === id));
 
 observeFadeIns();
 
+renderSubcategoryFilters();
 loadProviders();
