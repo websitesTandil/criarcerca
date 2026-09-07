@@ -5,6 +5,17 @@ function displayLabel(p) {
   return p.subcategoria ? subcategoryLabel(p.category, p.subcategoria) : categoryLabel(p.category);
 }
 
+// Arma el número para wa.me a partir de lo que carga el proveedor. Si empieza
+// con "+" se respeta tal cual (ya trae su propio código de país, para los
+// pocos casos de WhatsApp no argentino); si no, se le antepone el 54 como
+// siempre. En ambos casos se descarta cualquier espacio/guión/etc. que se
+// haya colado al cargar el dato.
+function whatsappNumber(raw) {
+  const trimmed = (raw || '').trim();
+  const digits = trimmed.replace(/\D/g, '');
+  return trimmed.startsWith('+') ? digits : `54${digits}`;
+}
+
 export function stripHtml(html) {
   const tmp = document.createElement('div');
   tmp.innerHTML = html;
@@ -92,7 +103,7 @@ export function setupModal(getProviderById) {
       contactBtn.textContent = 'Ver en Instagram';
       contactBtn.onclick = () => trackProviderContact(p, 'instagram');
     } else {
-      contactBtn.href = `https://wa.me/54${p.whatsapp}?text=Hola! Te contacto desde Criar Cerca 🌿`;
+      contactBtn.href = `https://wa.me/${whatsappNumber(p.whatsapp)}?text=Hola! Te contacto desde Criar Cerca 🌿`;
       contactBtn.textContent = 'Contactar por WhatsApp';
       contactBtn.onclick = () => trackProviderContact(p, 'whatsapp');
     }

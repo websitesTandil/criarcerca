@@ -113,6 +113,16 @@ window.submitForm = async function() {
     return;
   }
 
+  if (!/^\+?\d+$/.test(whatsapp)) {
+    alert('El WhatsApp debe tener solo números, sin espacios ni guiones (ej: 2494123456). Si es un número de otro país, escribilo con + adelante, ej: +17864980281.');
+    return;
+  }
+
+  if (/\s/.test(instagram)) {
+    alert('El usuario de Instagram no puede tener espacios (ej: @tunombre).');
+    return;
+  }
+
   if (subcategoriesFor(categoria).length > 0 && !subcategoria) {
     alert('Por favor seleccioná qué tipo de servicio para fiestas ofrecés.');
     return;

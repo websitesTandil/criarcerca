@@ -222,6 +222,19 @@ window._editarPublicado = function(id, data) {
 
 // ── GUARDAR MODAL ──
 window.saveModal = async function() {
+  const whatsapp = document.getElementById('editWhatsapp').value.trim();
+  const instagram = document.getElementById('editInstagram').value.trim();
+
+  if (whatsapp && !/^\+?\d+$/.test(whatsapp)) {
+    alert('El WhatsApp debe tener solo números, sin espacios ni guiones (ej: 2494123456). Si es un número de otro país, escribilo con + adelante, ej: +17864980281.');
+    return;
+  }
+
+  if (/\s/.test(instagram)) {
+    alert('El usuario de Instagram no puede tener espacios (ej: @tunombre).');
+    return;
+  }
+
   const btn = document.getElementById('btnSaveModal');
   btn.disabled = true;
   btn.textContent = 'Guardando...';
@@ -235,8 +248,8 @@ window.saveModal = async function() {
       : '',
     description: document.getElementById('editDescripcion').value.trim(),
     location: document.getElementById('editLocation').value.trim(),
-    whatsapp: document.getElementById('editWhatsapp').value.trim(),
-    instagram: document.getElementById('editInstagram').value.trim(),
+    whatsapp,
+    instagram,
     image: document.getElementById('editImage').value.trim(),
     color: 'color-1',
     pendiente: false,
