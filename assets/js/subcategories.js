@@ -6,6 +6,7 @@ export const SUBCATEGORIES = {
     { value: 'souvenirs', label: 'Souvenirs y papelería' },
     { value: 'salones', label: 'Salones y quinchos' },
     { value: 'animacion', label: 'Animación y juegos' },
+    { value: 'decoracion', label: 'Decoración' },
   ],
 };
 
