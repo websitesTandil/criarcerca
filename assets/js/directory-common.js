@@ -95,7 +95,7 @@ export function setupModal(getProviderById) {
     modalNegocio.style.display = p.negocio ? 'block' : 'none';
     document.getElementById('modalDesc').innerHTML = p.description;
     document.getElementById('modalInfo').innerHTML = `
-      ${p.beneficio ? `<div class="modal-benefit">🎁 <strong>Beneficio por contactarlo desde Criar Cerca:</strong> ${p.beneficio}</div>` : ''}
+      ${p.beneficio ? `<div class="modal-benefit">🎁 <strong>Beneficio por contactar desde Criar Cerca:</strong> ${p.beneficio}</div>` : ''}
       <div class="modal-info-row"><span class="label">📍 Zona</span><span>${p.location}</span></div>
       ${p.instagram ? `<div class="modal-info-row">
         <span class="label">Instagram</span>

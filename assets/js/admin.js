@@ -191,6 +191,7 @@ async function loadSolicitudes() {
             · 📅 ${new Date(s.fechaSolicitud).toLocaleDateString('es-AR')}
           </div>
           <div class="card-desc">${s.descripcion}</div>
+          ${s.beneficio ? `<div class="card-desc">🎁 <strong>Ofrece:</strong> ${s.beneficio}</div>` : ''}
         </div>
         <div class="card-actions">
           <button class="btn-approve" onclick="window._aprobar('${s.id}', ${JSON.stringify(s).replace(/"/g, '&quot;')})">

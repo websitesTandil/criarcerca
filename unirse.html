@@ -109,6 +109,11 @@
         <textarea id="descripcion" placeholder="Describí brevemente tu servicio, zona de atención, etc."></textarea>
       </div>
       <div class="form-group">
+        <label>¿Querés ofrecer un beneficio, descuento o regalo a quienes te contacten por acá? <span style="font-weight:300;text-transform:none;letter-spacing:0">(opcional)</span></label>
+        <p class="field-hint">Detallalo aquí. Se va a mostrar en tu tarjeta y ficha del directorio.</p>
+        <input type="text" id="beneficio" placeholder="Ej: 10% de descuento, envío gratis..." />
+      </div>
+      <div class="form-group">
         <label>Logo o foto de tu negocio <span style="font-weight:300;text-transform:none;letter-spacing:0">(opcional)</span></label>
         <div class="upload-area" id="uploadArea" onclick="document.getElementById('logoInput').click()">
           <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="handleImageSelect(event)" />

@@ -107,6 +107,7 @@ window.submitForm = async function() {
   const whatsapp = document.getElementById('whatsapp').value.trim();
   const descripcion = document.getElementById('descripcion').value.trim();
   const instagram = document.getElementById('instagram').value.trim();
+  const beneficio = document.getElementById('beneficio').value.trim();
 
   if (!nombre || !negocio || !categoria || !ubicacion || !whatsapp || !descripcion) {
     alert('Por favor completá todos los campos obligatorios.');
@@ -149,6 +150,7 @@ window.submitForm = async function() {
       whatsapp,
       instagram,
       descripcion,
+      beneficio,
       image: uploadedImageUrl || '',
       pendiente: true,
       fechaSolicitud: new Date().toISOString()
@@ -165,6 +167,7 @@ window.submitForm = async function() {
         whatsapp: whatsapp,
         instagram: instagram,
         descripcion: descripcion,
+        beneficio: beneficio,
         to_email: emailjsConfig.toEmail
       });
     } catch(mailErr) {
