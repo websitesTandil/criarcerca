@@ -793,6 +793,10 @@
     margin-bottom: 20px;
   }
 
+  #modalDesc {
+    white-space: pre-line;
+  }
+
   .modal-info {
     display: flex;
     flex-direction: column;
