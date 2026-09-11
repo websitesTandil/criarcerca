@@ -32,6 +32,7 @@ export function providerCardHtml(p) {
       </div>
       <div class="card-body">
         <h3>${p.name}</h3>
+        ${p.negocio ? `<p class="card-negocio">${p.negocio}</p>` : ''}
         <p>${stripHtml(p.description).substring(0, 90)}${p.description.length > 90 ? '...' : ''}</p>
         <div class="card-footer">
           <span class="card-location">📍 ${p.location}</span>
@@ -89,6 +90,9 @@ export function setupModal(getProviderById) {
 
     document.getElementById('modalCat').textContent = displayLabel(p);
     document.getElementById('modalName').textContent = p.name;
+    const modalNegocio = document.getElementById('modalNegocio');
+    modalNegocio.textContent = p.negocio || '';
+    modalNegocio.style.display = p.negocio ? 'block' : 'none';
     document.getElementById('modalDesc').innerHTML = p.description;
     document.getElementById('modalInfo').innerHTML = `
       ${p.beneficio ? `<div class="modal-benefit">🎁 <strong>Beneficio por contactarlo desde Criar Cerca:</strong> ${p.beneficio}</div>` : ''}

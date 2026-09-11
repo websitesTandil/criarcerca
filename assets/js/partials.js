@@ -57,6 +57,7 @@ function modalHtml() {
       <div class="modal-body">
         <div class="modal-cat" id="modalCat"></div>
         <h2 id="modalName"></h2>
+        <p class="modal-negocio" id="modalNegocio" style="display:none"></p>
         <p id="modalDesc"></p>
         <div class="modal-info" id="modalInfo"></div>
         <a href="#" class="modal-contact-btn" id="modalContact" target="_blank">Contactar por WhatsApp</a>
