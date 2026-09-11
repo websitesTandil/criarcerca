@@ -281,3 +281,69 @@
   object-fit: contain;
   padding: 4px;
 }
+
+/* ── SUBIR FOTO DEL NEGOCIO (modal edición) ── */
+.upload-area {
+  border: 2px dashed var(--sand);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.upload-area:hover {
+  border-color: var(--green-light);
+  background: var(--cream);
+}
+#editUploadPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+#editUploadPlaceholder p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+#editUploadPreview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: center;
+}
+#editUploadPreview img {
+  max-height: 80px;
+  max-width: 150px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid var(--sand);
+  background: white;
+}
+#editUploadPreview button {
+  background: var(--red-light);
+  color: var(--red);
+  border: none;
+  border-radius: 50px;
+  padding: 7px 14px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+.upload-bar {
+  height: 6px;
+  background: var(--sand);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 8px 0 4px;
+}
+.upload-bar-fill {
+  height: 100%;
+  background: var(--green-mid);
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.2s;
+}
+#editUploadStatus {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}

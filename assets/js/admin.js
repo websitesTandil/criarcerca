@@ -7,7 +7,7 @@ import {
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-import { firebaseConfig } from "./config.js";
+import { firebaseConfig, cloudinaryConfig } from "./config.js";
 import { CATEGORIES, categoryLabel } from "./categories.js";
 import { subcategoriesFor, subcategoryLabel } from "./subcategories.js";
 
@@ -42,6 +42,82 @@ window.updateEditSubcategoria = function(preselect = '') {
 let currentEditId = null;
 let currentEditCollection = null;
 let isApproving = false;
+
+// ── Foto del negocio: subida a Cloudinary (mismo criterio que unirse.js) ──
+function showEditImagePreview(url) {
+  const placeholder = document.getElementById('editUploadPlaceholder');
+  const preview = document.getElementById('editUploadPreview');
+  if (url) {
+    document.getElementById('editPreviewImg').src = url;
+    placeholder.style.display = 'none';
+    preview.style.display = 'flex';
+  } else {
+    placeholder.style.display = 'flex';
+    preview.style.display = 'none';
+  }
+}
+
+window.removeEditImage = function(e) {
+  e.stopPropagation();
+  document.getElementById('editImage').value = '';
+  document.getElementById('editImageInput').value = '';
+  showEditImagePreview('');
+};
+
+function uploadToCloudinary(file, onProgress) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', cloudinaryConfig.preset);
+
+  const xhr = new XMLHttpRequest();
+  xhr.upload.onprogress = e => {
+    if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+  };
+
+  return new Promise((resolve, reject) => {
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        resolve(JSON.parse(xhr.responseText).secure_url);
+      } else {
+        reject(new Error('Error al subir la imagen'));
+      }
+    };
+    xhr.onerror = () => reject(new Error('Error de conexión'));
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloud}/image/upload`);
+    xhr.send(formData);
+  });
+}
+
+window.handleEditImageSelect = async function(event) {
+  const file = event.target.files[0];
+  event.target.value = '';
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    alert('La imagen no puede superar los 5MB.');
+    return;
+  }
+
+  const progress = document.getElementById('editUploadProgress');
+  const status = document.getElementById('editUploadStatus');
+  const bar = document.getElementById('editUploadBarFill');
+  progress.style.display = 'block';
+  bar.style.width = '0%';
+  status.textContent = 'Subiendo imagen...';
+
+  try {
+    const url = await uploadToCloudinary(file, pct => {
+      bar.style.width = pct + '%';
+      status.textContent = `Subiendo... ${pct}%`;
+    });
+    document.getElementById('editImage').value = url;
+    showEditImagePreview(url);
+    status.textContent = '✅ Imagen subida';
+    setTimeout(() => { progress.style.display = 'none'; }, 1000);
+  } catch (err) {
+    alert('Error al subir la imagen: ' + err.message);
+    progress.style.display = 'none';
+  }
+};
 
 // ── OBSERVAR ESTADO DE AUTH ──
 onAuthStateChanged(auth, (user) => {
@@ -190,13 +266,7 @@ window._aprobar = function(id, data) {
   document.getElementById('editInstagram').value = data.instagram || '';
   document.getElementById('editBeneficio').value = data.beneficio || '';
   document.getElementById('editImage').value = data.image || '';
-  // Mostrar preview de imagen si existe
-  const preview = document.getElementById('editImagePreview');
-  if (data.image) {
-    preview.innerHTML = `<img src="${data.image}" alt="Logo" style="max-height:80px;max-width:150px;object-fit:contain;border-radius:8px;margin-top:8px;border:1px solid #e2d8cc;" />`;
-  } else {
-    preview.innerHTML = '<p style="font-size:0.8rem;color:#999;margin-top:4px;">Sin imagen — podés agregar una URL manualmente</p>';
-  }
+  showEditImagePreview(data.image || '');
 
   document.getElementById('editModal').classList.add('active');
 };
@@ -219,6 +289,7 @@ window._editarPublicado = function(id, data) {
   document.getElementById('editInstagram').value = data.instagram || '';
   document.getElementById('editBeneficio').value = data.beneficio || '';
   document.getElementById('editImage').value = data.image || '';
+  showEditImagePreview(data.image || '');
   document.getElementById('editModal').classList.add('active');
 };
 
@@ -306,4 +377,5 @@ window.closeEditModal = function() {
   currentEditCollection = null;
   isApproving = false;
   document.getElementById('btnSaveModal').disabled = false;
+  document.getElementById('editUploadProgress').style.display = 'none';
 };
