@@ -18,6 +18,7 @@ const db = getFirestore(app);
 
 let providers = [];
 let currentSubcategory = '';
+let onlyBenefit = false;
 
 async function loadProviders() {
   try {
@@ -53,9 +54,11 @@ function renderProviders() {
     return;
   }
 
-  const filtered = currentSubcategory
-    ? providers.filter(p => p.subcategoria === currentSubcategory)
-    : providers;
+  const filtered = providers.filter(p => {
+    const matchSubcat = !currentSubcategory || p.subcategoria === currentSubcategory;
+    const matchBenefit = !onlyBenefit || !!p.beneficio;
+    return matchSubcat && matchBenefit;
+  });
 
   comingSoon.style.display = 'none';
   count.textContent = `${filtered.length} servicio${filtered.length !== 1 ? 's' : ''}`;
@@ -94,6 +97,12 @@ window.setSubcategory = function(sub, btn) {
   currentSubcategory = sub;
   document.querySelectorAll('#subcategoryFilters .filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  renderProviders();
+};
+
+window.toggleBenefitFilter = function() {
+  onlyBenefit = !onlyBenefit;
+  document.getElementById('benefitFilterBtn').classList.toggle('active', onlyBenefit);
   renderProviders();
 };
 

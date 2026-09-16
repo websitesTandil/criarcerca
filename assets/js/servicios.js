@@ -19,6 +19,7 @@ let allProviders = [];
 let currentCategory = 'todos';
 let currentSubcategory = '';
 let currentSearch = '';
+let onlyBenefit = false;
 
 // ── Cargar providers aprobados de Firestore ──
 async function loadProviders() {
@@ -58,11 +59,12 @@ function renderProviders() {
   let filtered = allProviders.filter(p => {
     const matchCat = currentCategory === 'todos' || p.category === currentCategory;
     const matchSubcat = !currentSubcategory || p.subcategoria === currentSubcategory;
+    const matchBenefit = !onlyBenefit || !!p.beneficio;
     const matchSearch = !currentSearch ||
       p.name.toLowerCase().includes(currentSearch) ||
       p.description.toLowerCase().includes(currentSearch) ||
       p.category.toLowerCase().includes(currentSearch);
-    return matchCat && matchSubcat && matchSearch;
+    return matchCat && matchSubcat && matchBenefit && matchSearch;
   });
 
   count.textContent = `${filtered.length} servicio${filtered.length !== 1 ? 's' : ''}`;
@@ -110,6 +112,8 @@ setupModal(id => allProviders.find(x => x.id === id));
 window.setCategory = function(cat, btn) {
   currentCategory = cat;
   currentSubcategory = '';
+  onlyBenefit = false;
+  document.getElementById('benefitFilterBtn').classList.remove('active');
   document.querySelectorAll('#categoryFilters .filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderSubcategoryFilters(cat);
@@ -121,6 +125,12 @@ window.setSubcategory = function(sub, btn) {
   currentSubcategory = sub;
   document.querySelectorAll('#subcategoryFilters .filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  renderProviders();
+};
+
+window.toggleBenefitFilter = function() {
+  onlyBenefit = !onlyBenefit;
+  document.getElementById('benefitFilterBtn').classList.toggle('active', onlyBenefit);
   renderProviders();
 };
 

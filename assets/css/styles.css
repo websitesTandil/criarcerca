@@ -325,6 +325,21 @@
     color: var(--cream);
   }
 
+  .filter-btn.benefit-btn {
+    display: inline-flex;
+    margin-bottom: 16px;
+    border-color: var(--terracotta);
+    color: var(--terracotta);
+    background: transparent;
+  }
+
+  .filter-btn.benefit-btn:hover,
+  .filter-btn.benefit-btn.active {
+    background: var(--terracotta);
+    border-color: var(--terracotta);
+    color: var(--cream);
+  }
+
   /* ── PROVIDERS GRID ── */
   .providers-section {
     padding: 33px 32px;
