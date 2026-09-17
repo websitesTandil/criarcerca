@@ -7,6 +7,7 @@ export const CATEGORIES = [
   { value: 'juguetes', emoji: '🧩', label: 'Juguetes y Libros' },
   { value: 'niñeras', emoji: '👶', label: 'Niñeras' },
   { value: 'otros', emoji: '✨', label: 'Otros' },
+  { value: 'pañaleras', emoji: '🍼', label: 'Pañaleras' },
   { value: 'ropa', emoji: '🧸', label: 'Ropa y accesorios' },
   { value: 'salud', emoji: '💚', label: 'Salud' },
 ];
