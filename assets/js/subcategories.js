@@ -4,7 +4,7 @@ export const SUBCATEGORIES = {
   fiestas: [
     { value: 'pasteleria', label: 'Pastelería y comida' },
     { value: 'souvenirs', label: 'Souvenirs y papelería' },
-    { value: 'salones', label: 'Salones y quinchos' },
+    { value: 'salones', label: 'Peloteros y salones' },
     { value: 'animacion', label: 'Animación y juegos' },
     { value: 'decoracion', label: 'Decoración' },
   ],
