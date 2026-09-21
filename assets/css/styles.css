@@ -1014,6 +1014,16 @@
 .category-intro p + p {
   margin-top: 12px;
 }
+.category-intro .faq-jump {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--green-mid);
+  text-decoration: none;
+  font-weight: 500;
+}
+.category-intro .faq-jump:hover {
+  text-decoration: underline;
+}
 .category-pills {
   display: flex;
   gap: 10px;
@@ -1021,11 +1031,8 @@
   flex-wrap: wrap;
   padding: 8px 32px 32px;
 }
-/* Cuando hay una segunda fila de pills (subcategorías), acercarla a la primera */
-.category-pills:has(+ .category-pills) {
-  padding-bottom: 12px;
-}
-.category-pills a.filter-btn {
+.category-pills a.filter-btn,
+.subcategory-filters a.filter-btn {
   text-decoration: none;
 }
 .category-cta {

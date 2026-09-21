@@ -5,7 +5,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./config.js";
 import { providerCardHtml, setupModal, observeFadeIns } from "./directory-common.js";
-import { mountPartials, mountCategoryPills, mountSubcategoryPages } from "./partials.js";
+import { mountPartials, mountCategoryPills, categoryPageFor } from "./partials.js";
 import { subcategoriesFor } from "./subcategories.js";
 
 const CATEGORY = document.body.dataset.category;
@@ -15,13 +15,17 @@ const FIXED_SUBCATEGORY = document.body.dataset.subcategory || '';
 
 mountPartials('../');
 mountCategoryPills(CATEGORY, '../');
-mountSubcategoryPages(CATEGORY, FIXED_SUBCATEGORY);
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// En la página de la categoría, ?sub=<valor> deja preseleccionado ese filtro
+// (lo usan las subpáginas para mandar a una subcategoría que no tiene página propia).
+const paramSub = new URLSearchParams(location.search).get('sub');
+const validParamSub = subcategoriesFor(CATEGORY).some(s => s.value === paramSub) ? paramSub : '';
+
 let providers = [];
-let currentSubcategory = FIXED_SUBCATEGORY;
+let currentSubcategory = FIXED_SUBCATEGORY || validParamSub;
 let onlyBenefit = false;
 
 async function loadProviders() {
@@ -91,10 +95,27 @@ function renderSubcategoryFilters() {
     return;
   }
 
+  // Las subcategorías con página propia son links a esa página (sirve a las
+  // personas y a Google); las que no, filtran en el lugar. Desde una subpágina,
+  // "Todas" y las que no tienen página vuelven a la página de la categoría.
+  const parent = categoryPageFor(CATEGORY);
+  const onSubpage = !!FIXED_SUBCATEGORY;
+  const activeCls = isActive => (isActive ? ' active' : '');
+
+  const all = onSubpage
+    ? `<a class="filter-btn" href="${parent}">Todas</a>`
+    : `<button class="filter-btn${activeCls(!currentSubcategory)}" onclick="setSubcategory('', this)">Todas</button>`;
+
+  const items = options.map(s => {
+    const isActive = s.value === currentSubcategory;
+    if (s.page) return `<a class="filter-btn${activeCls(isActive)}" href="${s.page}">${s.label}</a>`;
+    return onSubpage
+      ? `<a class="filter-btn" href="${parent}?sub=${s.value}">${s.label}</a>`
+      : `<button class="filter-btn${activeCls(isActive)}" onclick="setSubcategory('${s.value}', this)">${s.label}</button>`;
+  }).join('');
+
   wrap.style.display = 'flex';
-  wrap.innerHTML =
-    `<button class="filter-btn active" onclick="setSubcategory('', this)">Todas</button>` +
-    options.map(s => `<button class="filter-btn" onclick="setSubcategory('${s.value}', this)">${s.label}</button>`).join('');
+  wrap.innerHTML = all + items;
 }
 
 window.setSubcategory = function(sub, btn) {
@@ -111,6 +132,18 @@ window.toggleBenefitFilter = function() {
 };
 
 setupModal(id => providers.find(x => x.id === id));
+
+// Las FAQ quedan al final de la página, después de todas las tarjetas, y en las
+// categorías grandes cuesta llegar. Se agrega un acceso directo al final del intro.
+function addFaqJumpLink() {
+  const faq = document.querySelector('.faq-section');
+  const intro = document.querySelector('.category-intro');
+  if (!faq || !intro) return;
+  faq.id = 'faq';
+  intro.insertAdjacentHTML('beforeend', '<a class="faq-jump" href="#faq">Preguntas frecuentes ↓</a>');
+}
+
+addFaqJumpLink();
 
 observeFadeIns();
 

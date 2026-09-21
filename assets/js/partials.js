@@ -1,5 +1,4 @@
 import { CATEGORIES } from "./categories.js";
-import { subcategoryPagesFor } from "./subcategories.js";
 
 // Fragmentos de HTML repetidos entre servicios.html y las páginas de categoría.
 // basePath es '' en la raíz y '../' dentro de /categorias/.
@@ -100,17 +99,7 @@ export function mountCategoryPills(currentCategory, basePath = '') {
   nav.innerHTML = `${pills}<a class="filter-btn" href="${basePath}servicios.html">Ver todos</a>`;
 }
 
-// Links a las páginas de subcategoría de una categoría (ej. las de Fiestas), en
-// el contenedor #subcategoryPages. Si viene currentSubcategory se marca activa y
-// se agrega un link "Todas" a la página de la categoría.
-export function mountSubcategoryPages(category, currentSubcategory = '') {
-  const nav = document.getElementById('subcategoryPages');
-  if (!nav) return;
-
-  const all = currentSubcategory
-    ? `<a class="filter-btn" href="${CATEGORY_PAGES[category]}">Todas</a>`
-    : '';
-  nav.innerHTML = all + subcategoryPagesFor(category)
-    .map(s => `<a class="filter-btn${s.value === currentSubcategory ? ' active' : ''}" href="${s.page}">${s.pageLabel}</a>`)
-    .join('');
+// Archivo de /categorias/ que corresponde a una categoría (para armar links).
+export function categoryPageFor(category) {
+  return CATEGORY_PAGES[category];
 }
