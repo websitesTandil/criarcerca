@@ -100,10 +100,15 @@ function renderSubcategoryFilters(cat) {
     return;
   }
 
+  // Las subcategorías con página propia (ej. tortas) son links a esa página; las
+  // que no la tienen filtran en el lugar.
   wrap.style.display = 'flex';
   wrap.innerHTML =
     `<button class="filter-btn active" onclick="setSubcategory('', this)">Todas</button>` +
-    options.map(s => `<button class="filter-btn" onclick="setSubcategory('${s.value}', this)">${s.label}</button>`).join('');
+    options.map(s => s.page
+      ? `<a class="filter-btn" href="categorias/${s.page}">${s.label}</a>`
+      : `<button class="filter-btn" onclick="setSubcategory('${s.value}', this)">${s.label}</button>`
+    ).join('');
 }
 
 // ── Modal + tracking (compartido con las páginas de categoría) ──
