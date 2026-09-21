@@ -22,6 +22,19 @@ export function stripHtml(html) {
   return tmp.textContent || tmp.innerText || '';
 }
 
+// Minúsculas y sin tildes, para que "pasteleria" encuentre "Pastelería".
+function normalizeText(s) {
+  return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
+// Búsqueda del listado (servicios.html y páginas de categoría): nombre, negocio,
+// descripción y tipo de servicio. Sin término, todo coincide.
+export function matchesSearch(p, term) {
+  const q = normalizeText(term).trim();
+  if (!q) return true;
+  return normalizeText([p.name, p.negocio, stripHtml(p.description), displayLabel(p)].join(' ')).includes(q);
+}
+
 export function providerCardHtml(p) {
   return `
     <div class="provider-card fade-in" onclick="window._openModal('${p.id}')">

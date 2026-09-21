@@ -4,10 +4,9 @@ import {
   query, where, orderBy
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./config.js";
-import { CATEGORIES, categoryLabel } from "./categories.js";
-import { subcategoriesFor } from "./subcategories.js";
-import { providerCardHtml, setupModal, observeFadeIns } from "./directory-common.js";
-import { mountPartials } from "./partials.js";
+import { CATEGORIES } from "./categories.js";
+import { providerCardHtml, setupModal, observeFadeIns, matchesSearch } from "./directory-common.js";
+import { mountPartials, categoryPageFor } from "./partials.js";
 
 mountPartials('');
 
@@ -17,7 +16,6 @@ const db = getFirestore(app);
 // ── Estado global ──
 let allProviders = [];
 let currentCategory = 'todos';
-let currentSubcategory = '';
 let currentSearch = '';
 let onlyBenefit = false;
 
@@ -58,13 +56,8 @@ function renderProviders() {
 
   let filtered = allProviders.filter(p => {
     const matchCat = currentCategory === 'todos' || p.category === currentCategory;
-    const matchSubcat = !currentSubcategory || p.subcategoria === currentSubcategory;
     const matchBenefit = !onlyBenefit || !!p.beneficio;
-    const matchSearch = !currentSearch ||
-      p.name.toLowerCase().includes(currentSearch) ||
-      p.description.toLowerCase().includes(currentSearch) ||
-      p.category.toLowerCase().includes(currentSearch);
-    return matchCat && matchSubcat && matchBenefit && matchSearch;
+    return matchCat && matchBenefit && matchesSearch(p, currentSearch);
   });
 
   count.textContent = `${filtered.length} servicio${filtered.length !== 1 ? 's' : ''}`;
@@ -84,31 +77,17 @@ function renderProviders() {
   }, 50);
 }
 
+// Las categorías con página propia en /categorias/ son links a esa página; las
+// que no la tienen (hoy solo "Otros") filtran en el lugar.
 function renderCategoryFilters() {
   document.getElementById('categoryFilters').insertAdjacentHTML('beforeend',
-    CATEGORIES.map(c => `<button class="filter-btn" onclick="setCategory('${c.value}', this)">${c.emoji} ${c.label}</button>`).join('')
+    CATEGORIES.map(c => {
+      const page = categoryPageFor(c.value);
+      return page
+        ? `<a class="filter-btn" href="categorias/${page}">${c.emoji} ${c.label}</a>`
+        : `<button class="filter-btn" onclick="setCategory('${c.value}', this)">${c.emoji} ${c.label}</button>`;
+    }).join('')
   );
-}
-
-function renderSubcategoryFilters(cat) {
-  const wrap = document.getElementById('subcategoryFilters');
-  const options = subcategoriesFor(cat);
-
-  if (options.length === 0) {
-    wrap.style.display = 'none';
-    wrap.innerHTML = '';
-    return;
-  }
-
-  // Las subcategorías con página propia (ej. tortas) son links a esa página; las
-  // que no la tienen filtran en el lugar.
-  wrap.style.display = 'flex';
-  wrap.innerHTML =
-    `<button class="filter-btn active" onclick="setSubcategory('', this)">Todas</button>` +
-    options.map(s => s.page
-      ? `<a class="filter-btn" href="categorias/${s.page}">${s.label}</a>`
-      : `<button class="filter-btn" onclick="setSubcategory('${s.value}', this)">${s.label}</button>`
-    ).join('');
 }
 
 // ── Modal + tracking (compartido con las páginas de categoría) ──
@@ -116,20 +95,11 @@ setupModal(id => allProviders.find(x => x.id === id));
 
 window.setCategory = function(cat, btn) {
   currentCategory = cat;
-  currentSubcategory = '';
   onlyBenefit = false;
   document.getElementById('benefitFilterBtn').classList.remove('active');
   document.querySelectorAll('#categoryFilters .filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  renderSubcategoryFilters(cat);
   history.replaceState(null, '', cat === 'todos' ? window.location.pathname : '?cat=' + encodeURIComponent(cat));
-  renderProviders();
-};
-
-window.setSubcategory = function(sub, btn) {
-  currentSubcategory = sub;
-  document.querySelectorAll('#subcategoryFilters .filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
   renderProviders();
 };
 
@@ -140,7 +110,7 @@ window.toggleBenefitFilter = function() {
 };
 
 window.filterProviders = function() {
-  currentSearch = document.getElementById('searchInput').value.toLowerCase();
+  currentSearch = document.getElementById('searchInput').value;
   renderProviders();
 };
 
@@ -153,20 +123,26 @@ document.getElementById('searchInput').addEventListener('keyup', e => {
 renderCategoryFilters();
 
 // ── Leer ?cat= al cargar ──
+// Los links viejos (?cat=ninieras, etc.) redirigen a la página de esa categoría;
+// para las que filtran en el lugar (hoy "Otros") se deja el filtro activo.
 (function() {
-  const params = new URLSearchParams(window.location.search);
-  const cat = params.get('cat');
-  if (cat) {
-    document.querySelectorAll('#categoryFilters .filter-btn').forEach(btn => {
-      const onclick = btn.getAttribute('onclick') || '';
-      if (onclick.includes(`'${cat}'`)) {
-        currentCategory = cat;
-        document.querySelectorAll('#categoryFilters .filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderSubcategoryFilters(cat);
-      }
-    });
+  const cat = new URLSearchParams(window.location.search).get('cat');
+  if (!cat) return;
+
+  const page = categoryPageFor(cat);
+  if (page) {
+    window.location.replace(`categorias/${page}`);
+    return;
   }
+
+  document.querySelectorAll('#categoryFilters button.filter-btn').forEach(btn => {
+    const onclick = btn.getAttribute('onclick') || '';
+    if (onclick.includes(`'${cat}'`)) {
+      currentCategory = cat;
+      document.querySelectorAll('#categoryFilters .filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+  });
 })();
 
 // ── Scroll animations ──

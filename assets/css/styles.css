@@ -276,6 +276,12 @@
 
   .search-bar button:hover { background: var(--green-mid); }
 
+  /* Buscador dentro del listado de las páginas de categoría (fondo crema) */
+  .search-bar.list-search {
+    background: var(--white);
+    margin-bottom: 20px;
+  }
+
   .category-filters {
     display: flex;
     gap: 10px;
@@ -874,7 +880,9 @@
   @media (max-width: 600px) {
     header { padding: 14px 20px; }
     .nav-toggle { display: flex; }
-    nav {
+    /* Menú desplegable del header (☰). Va con `header nav` para no afectar a otros
+       <nav> de la página, como la fila de categorías (.category-pills). */
+    header nav {
       display: none;
       position: absolute;
       top: 100%;
@@ -889,7 +897,7 @@
       padding: 8px 20px 16px;
     }
     header.nav-open nav { display: flex; }
-    nav a { padding: 12px 16px; }
+    header nav a { padding: 12px 16px; }
     .form-row { grid-template-columns: 1fr; }
     .form-container { padding: 24px; }
     .providers-grid { grid-template-columns: 1fr; }
@@ -1032,6 +1040,7 @@
   padding: 8px 32px 32px;
 }
 .category-pills a.filter-btn,
+.category-filters a.filter-btn,
 .subcategory-filters a.filter-btn {
   text-decoration: none;
 }

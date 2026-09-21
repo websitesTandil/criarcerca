@@ -4,7 +4,7 @@ import {
   query, where, orderBy
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./config.js";
-import { providerCardHtml, setupModal, observeFadeIns } from "./directory-common.js";
+import { providerCardHtml, setupModal, observeFadeIns, matchesSearch } from "./directory-common.js";
 import { mountPartials, mountCategoryPills, categoryPageFor } from "./partials.js";
 import { subcategoriesFor } from "./subcategories.js";
 
@@ -26,6 +26,7 @@ const validParamSub = subcategoriesFor(CATEGORY).some(s => s.value === paramSub)
 
 let providers = [];
 let currentSubcategory = FIXED_SUBCATEGORY || validParamSub;
+let currentSearch = '';
 let onlyBenefit = false;
 
 async function loadProviders() {
@@ -65,7 +66,7 @@ function renderProviders() {
   const filtered = providers.filter(p => {
     const matchSubcat = !currentSubcategory || p.subcategoria === currentSubcategory;
     const matchBenefit = !onlyBenefit || !!p.beneficio;
-    return matchSubcat && matchBenefit;
+    return matchSubcat && matchBenefit && matchesSearch(p, currentSearch);
   });
 
   comingSoon.style.display = 'none';
@@ -73,6 +74,9 @@ function renderProviders() {
 
   if (filtered.length === 0) {
     grid.innerHTML = '';
+    empty.querySelector('p').textContent = currentSearch.trim()
+      ? 'Probá con otra búsqueda o mirá el resto del directorio'
+      : emptyDefaultText;
     empty.style.display = 'block';
     return;
   }
@@ -125,6 +129,26 @@ window.setSubcategory = function(sub, btn) {
   renderProviders();
 };
 
+// Cuadro de búsqueda del listado: se agrega arriba de los filtros y filtra a
+// medida que se escribe (el botón "Buscar" y Enter hacen lo mismo).
+const emptyDefaultText = document.querySelector('#emptyState p')?.textContent || '';
+
+function addSearchBar() {
+  const anchor = document.getElementById('benefitFilterBtn');
+  if (!anchor) return;
+  anchor.insertAdjacentHTML('beforebegin', `
+    <div class="search-bar list-search">
+      <input type="text" id="searchInput" placeholder="Buscá por nombre o tipo de servicio..." aria-label="Buscar en el listado" />
+      <button onclick="filterProviders()">Buscar</button>
+    </div>`);
+  document.getElementById('searchInput').addEventListener('input', () => window.filterProviders());
+}
+
+window.filterProviders = function() {
+  currentSearch = document.getElementById('searchInput').value;
+  renderProviders();
+};
+
 window.toggleBenefitFilter = function() {
   onlyBenefit = !onlyBenefit;
   document.getElementById('benefitFilterBtn').classList.toggle('active', onlyBenefit);
@@ -144,6 +168,7 @@ function addFaqJumpLink() {
 }
 
 addFaqJumpLink();
+addSearchBar();
 
 observeFadeIns();
 
