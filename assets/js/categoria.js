@@ -5,19 +5,23 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./config.js";
 import { providerCardHtml, setupModal, observeFadeIns } from "./directory-common.js";
-import { mountPartials, mountCategoryPills } from "./partials.js";
+import { mountPartials, mountCategoryPills, mountSubcategoryPages } from "./partials.js";
 import { subcategoriesFor } from "./subcategories.js";
 
 const CATEGORY = document.body.dataset.category;
+// En las páginas de subcategoría (ej. tortas) el body trae data-subcategory y la
+// lista queda fija en esa subcategoría.
+const FIXED_SUBCATEGORY = document.body.dataset.subcategory || '';
 
 mountPartials('../');
 mountCategoryPills(CATEGORY, '../');
+mountSubcategoryPages(CATEGORY, FIXED_SUBCATEGORY);
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 let providers = [];
-let currentSubcategory = '';
+let currentSubcategory = FIXED_SUBCATEGORY;
 let onlyBenefit = false;
 
 async function loadProviders() {

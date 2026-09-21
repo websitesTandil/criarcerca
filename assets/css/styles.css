@@ -1011,12 +1011,19 @@
   line-height: 1.7;
   font-size: 13px;
 }
+.category-intro p + p {
+  margin-top: 12px;
+}
 .category-pills {
   display: flex;
   gap: 10px;
   justify-content: center;
   flex-wrap: wrap;
   padding: 8px 32px 32px;
+}
+/* Cuando hay una segunda fila de pills (subcategorías), acercarla a la primera */
+.category-pills:has(+ .category-pills) {
+  padding-bottom: 12px;
 }
 .category-pills a.filter-btn {
   text-decoration: none;
