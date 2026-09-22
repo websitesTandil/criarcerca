@@ -165,7 +165,7 @@
     font-size: 1.1rem;
     color: var(--green-pale);
     line-height: 1.7;
-    margin-bottom: 44px;
+    margin-bottom: 20px;
     font-weight: 300;
   }
 
@@ -203,6 +203,19 @@
   .btn-outline:hover {
     border-color: var(--blush);
     color: var(--blush);
+  }
+
+  .hero-join-note {
+    margin-top: 48px;
+    font-size: 0.85rem;
+    color: rgba(200,219,200,0.65);
+    line-height: 1.6;
+    max-width: 460px;
+  }
+
+  .hero-join-btn {
+    margin-top: 10px;
+    align-self: flex-start;
   }
 
   @media (max-width: 900px) {
