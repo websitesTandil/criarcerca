@@ -88,11 +88,13 @@ export function mountCategoryPills(currentCategory, basePath = '') {
   const nav = document.getElementById('categoryPills');
   if (!nav) return;
 
+  // Las categorías sin página propia (hoy solo "Otros") llevan al listado general
+  // ya filtrado, así no desaparecen de la barra.
   const pills = CATEGORIES
-    .filter(c => CATEGORY_PAGES[c.value])
     .map(c => {
       const cls = c.value === currentCategory ? 'filter-btn active' : 'filter-btn';
-      return `<a class="${cls}" href="${CATEGORY_PAGES[c.value]}">${c.emoji} ${c.label}</a>`;
+      const href = CATEGORY_PAGES[c.value] || `${basePath}servicios.html?cat=${encodeURIComponent(c.value)}`;
+      return `<a class="${cls}" href="${href}">${c.emoji} ${c.label}</a>`;
     })
     .join('');
 
