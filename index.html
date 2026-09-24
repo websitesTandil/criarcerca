@@ -95,6 +95,12 @@
   </div>
 </section>
 
+<!-- DESTACADOS -->
+<section class="destacados-section" id="destacadosSection" style="display:none">
+  <h2>Negocios destacados ✨</h2>
+  <div class="destacados-track" id="destacadosTrack"></div>
+</section>
+
 <!-- SERVICIOS DESTACADOS - Para keywords -->
 <section style="padding: 60px 32px; background: #f7f3ee; text-align: center;">
   <h2 style="font-size: 1.8rem; color: #2a3d30; margin-bottom: 40px; font-family: 'Playfair Display', serif;">¿Qué podés encontrar en Criar Cerca?</h2>
@@ -161,7 +167,7 @@
 <footer>
   <div class="footer-logo">Criar <span>Cerca</span></div>
   <p>El directorio de familias de Tandil y zona</p>
-  <p><a href="https://www.instagram.com/crear.cerca" target="_blank">@criar.cerca</a></p>
+  <p><a href="https://www.instagram.com/criar.cerca" target="_blank">@criar.cerca</a></p>
 </footer>
 
 <!-- WhatsApp Flotante -->
@@ -171,6 +177,10 @@
   </svg>
 </a>
 
+<!-- MODAL (lo usan las tarjetas de destacados) -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)"></div>
+
+<script type="module" src="assets/js/destacados.js"></script>
 <script src="assets/js/nav-toggle.js"></script>
 </body>
 </html>

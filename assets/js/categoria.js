@@ -4,7 +4,10 @@ import {
   query, where, orderBy
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./config.js";
-import { providerCardHtml, setupModal, observeFadeIns, matchesSearch } from "./directory-common.js";
+import {
+  providerCardHtml, destacadoWideHtml, initDescToggles, isFeatured, sortFeatured,
+  setupModal, observeFadeIns, matchesSearch
+} from "./directory-common.js";
 import { mountPartials, mountCategoryPills, categoryPageFor } from "./partials.js";
 import { subcategoriesFor } from "./subcategories.js";
 
@@ -49,6 +52,35 @@ async function loadProviders() {
   }
 }
 
+// Destacados (Estándar y Premium) de esta página: van fijos arriba del buscador
+// y de los filtros, así que no se filtran. En una subpágina (ej. salones) solo
+// entran los de esa subcategoría.
+function featuredForPage() {
+  return sortFeatured(providers.filter(p =>
+    isFeatured(p) && (!FIXED_SUBCATEGORY || p.subcategoria === FIXED_SUBCATEGORY)
+  ));
+}
+
+function renderDestacados() {
+  const featured = featuredForPage();
+  let wrap = document.getElementById('categoryDestacados');
+  if (featured.length === 0) {
+    if (wrap) wrap.style.display = 'none';
+    return;
+  }
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.id = 'categoryDestacados';
+    wrap.className = 'category-destacados';
+    document.querySelector('.providers-section .section-header').insertAdjacentElement('afterend', wrap);
+  }
+  wrap.style.display = 'block';
+  wrap.innerHTML = `
+    <h3>Destacados ✨</h3>
+    <div class="destacados-list">${featured.map(destacadoWideHtml).join('')}</div>`;
+  initDescToggles();
+}
+
 function renderProviders() {
   const grid = document.getElementById('providersGrid');
   const empty = document.getElementById('emptyState');
@@ -56,6 +88,7 @@ function renderProviders() {
   const count = document.getElementById('providerCount');
 
   if (providers.length === 0) {
+    renderDestacados();
     grid.innerHTML = '';
     empty.style.display = 'none';
     comingSoon.style.display = 'block';
@@ -63,17 +96,28 @@ function renderProviders() {
     return;
   }
 
-  const filtered = providers.filter(p => {
+  // Los destacados van en su franja y no se repiten en la grilla.
+  const rest = providers.filter(p => {
     const matchSubcat = !currentSubcategory || p.subcategoria === currentSubcategory;
     const matchBenefit = !onlyBenefit || !!p.beneficio;
-    return matchSubcat && matchBenefit && matchesSearch(p, currentSearch);
+    return !isFeatured(p) && matchSubcat && matchBenefit && matchesSearch(p, currentSearch);
   });
 
-  comingSoon.style.display = 'none';
-  count.textContent = `${filtered.length} servicio${filtered.length !== 1 ? 's' : ''}`;
+  const featuredCount = featuredForPage().length;
+  const filtersActive = !!currentSearch.trim() || onlyBenefit || (!!currentSubcategory && !FIXED_SUBCATEGORY);
+  const total = filtersActive ? rest.length : rest.length + featuredCount;
 
-  if (filtered.length === 0) {
+  renderDestacados();
+  comingSoon.style.display = 'none';
+  count.textContent = `${total} servicio${total !== 1 ? 's' : ''}`;
+
+  if (rest.length === 0) {
     grid.innerHTML = '';
+    // Si solo hay destacados y no hay filtros, no hay nada más para mostrar.
+    if (!filtersActive && featuredCount > 0) {
+      empty.style.display = 'none';
+      return;
+    }
     empty.querySelector('p').textContent = currentSearch.trim()
       ? 'Probá con otra búsqueda o mirá el resto del directorio'
       : emptyDefaultText;
@@ -82,7 +126,7 @@ function renderProviders() {
   }
 
   empty.style.display = 'none';
-  grid.innerHTML = filtered.map(providerCardHtml).join('');
+  grid.innerHTML = rest.map(providerCardHtml).join('');
 
   setTimeout(() => {
     document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
