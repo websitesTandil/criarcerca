@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<link rel="icon" type="image/x-icon" href="assets/img/favicon.ico">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2a3d30">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Negocio — Criar Cerca</title>
+<meta name="robots" content="noindex, follow" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4E7W0PR5W"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-S4E7W0PR5W');
+</script>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="siteHeader"></header>
+
+<!-- CONTENIDO -->
+<section class="negocio-page">
+  <div class="negocio-loading" id="negocioLoading">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="negocio-content" id="negocioContent" style="display:none">
+    <a href="servicios.html" class="negocio-back">← Volver al directorio</a>
+    <div class="negocio-header">
+      <div class="negocio-image" id="negocioImage"></div>
+      <div class="negocio-headinfo">
+        <span class="negocio-cat" id="negocioCat"></span>
+        <h1 id="negocioName"></h1>
+        <span class="negocio-location" id="negocioLocation"></span>
+      </div>
+    </div>
+    <div class="negocio-benefit" id="negocioBenefit" style="display:none"></div>
+    <div class="negocio-desc" id="negocioDesc"></div>
+    <div class="negocio-gallery" id="negocioGallery" style="display:none"></div>
+    <div class="negocio-actions">
+      <a href="#" class="negocio-contact" id="negocioContact" target="_blank">Contactar por WhatsApp</a>
+      <a href="#" class="negocio-instagram" id="negocioInstagram" style="display:none" target="_blank"></a>
+    </div>
+  </div>
+
+  <div class="negocio-notfound" id="negocioNotFound" style="display:none">
+    <h1>No encontramos este negocio</h1>
+    <p>Puede que ya no esté disponible en el directorio.</p>
+    <a href="servicios.html">Ver todos los servicios →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="siteFooter"></footer>
+
+<!-- WhatsApp Flotante -->
+<div id="siteWhatsapp"></div>
+
+<script type="module" src="assets/js/negocio.js"></script>
+<script src="assets/js/nav-toggle.js"></script>
+</body>
+</html>

@@ -21,6 +21,13 @@ document.getElementById('editCategoria').insertAdjacentHTML('beforeend',
   CATEGORIES.map(c => `<option value="${c.value}">${c.emoji} ${c.label}</option>`).join('')
 );
 
+// ── Badge de "pidió un plan pago" en la tarjeta de solicitud ──
+const PLAN_REQUEST_LABELS = { estandar: 'Quiere: Estándar', premium: 'Quiere: Premium' };
+function planRequestBadge(planSolicitado) {
+  const label = PLAN_REQUEST_LABELS[planSolicitado];
+  return label ? `<div class="card-badge-plan">💳 ${label}</div>` : '';
+}
+
 // ── Mostrar/pintar subcategoría según la categoría elegida en el modal ──
 window.updateEditSubcategoria = function(preselect = '') {
   const categoria = document.getElementById('editCategoria').value;
@@ -42,6 +49,64 @@ window.updateEditSubcategoria = function(preselect = '') {
 let currentEditId = null;
 let currentEditCollection = null;
 let isApproving = false;
+let currentGaleria = [];
+
+// ── Mostrar/ocultar campos exclusivos de Premium (galería + descripción extendida) ──
+window.updateEditPlanVisibility = function() {
+  const isPremium = document.getElementById('editPlan').value === 'premium';
+  document.getElementById('editPremiumGroup').style.display = isPremium ? 'block' : 'none';
+  document.getElementById('editGaleriaGroup').style.display = isPremium ? 'block' : 'none';
+};
+
+function renderGaleriaPreview() {
+  document.getElementById('galeriaPreview').innerHTML = currentGaleria.map((url, i) => `
+    <div class="galeria-thumb">
+      <img src="${url}" alt="Foto ${i + 1}" />
+      <button type="button" onclick="removeGaleriaImage(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+window.removeGaleriaImage = function(i) {
+  currentGaleria.splice(i, 1);
+  renderGaleriaPreview();
+};
+
+window.handleGaleriaSelect = async function(event) {
+  const files = Array.from(event.target.files || []);
+  event.target.value = '';
+  if (files.length === 0) return;
+
+  const disponibles = 10 - currentGaleria.length;
+  if (disponibles <= 0) {
+    alert('Ya llegaste al máximo de 10 fotos.');
+    return;
+  }
+  const aSubir = files.slice(0, disponibles);
+  if (files.length > disponibles) {
+    alert(`Solo se van a subir ${disponibles} foto(s) más (máximo 10 en total).`);
+  }
+
+  const progress = document.getElementById('galeriaProgress');
+  const status = document.getElementById('galeriaStatus');
+  const bar = document.getElementById('galeriaBarFill');
+  progress.style.display = 'block';
+
+  for (let i = 0; i < aSubir.length; i++) {
+    status.textContent = `Subiendo foto ${i + 1} de ${aSubir.length}...`;
+    bar.style.width = `${Math.round((i / aSubir.length) * 100)}%`;
+    try {
+      const url = await uploadToCloudinary(aSubir[i], () => {});
+      currentGaleria.push(url);
+      renderGaleriaPreview();
+    } catch (err) {
+      alert('Error subiendo una imagen: ' + err.message);
+    }
+  }
+  bar.style.width = '100%';
+  status.textContent = '✅ Listo';
+  setTimeout(() => { progress.style.display = 'none'; }, 1200);
+};
 
 // ── Foto del negocio: subida a Cloudinary (mismo criterio que unirse.js) ──
 function showEditImagePreview(url) {
@@ -183,7 +248,7 @@ async function loadSolicitudes() {
       <div class="card" id="sol-${s.id}">
         ${s.image ? `<div class="card-thumb"><img src="${s.image}" alt="${s.negocio}" /></div>` : ''}
         <div class="card-info">
-          <div class="card-badge">${categoryLabel(s.categoria)}${s.subcategoria ? ' · ' + subcategoryLabel(s.categoria, s.subcategoria) : ''}</div>
+          <div class="card-badge">${categoryLabel(s.categoria)}${s.subcategoria ? ' · ' + subcategoryLabel(s.categoria, s.subcategoria) : ''}</div>${planRequestBadge(s.planSolicitado)}
           <div class="card-name">${s.nombre || s.negocio}${s.negocio ? ` — ${s.negocio}` : ''}</div>
           <div class="card-meta">
             ${s.location ? `📍 ${s.location} · ` : ''}📱 ${s.whatsapp}
@@ -266,6 +331,11 @@ window._aprobar = function(id, data) {
   document.getElementById('editWhatsapp').value = data.whatsapp || '';
   document.getElementById('editInstagram').value = data.instagram || '';
   document.getElementById('editBeneficio').value = data.beneficio || '';
+  document.getElementById('editPlan').value = data.planSolicitado || 'free';
+  document.getElementById('editDescripcionExtendida').value = '';
+  currentGaleria = [];
+  renderGaleriaPreview();
+  updateEditPlanVisibility();
   document.getElementById('editImage').value = data.image || '';
   showEditImagePreview(data.image || '');
 
@@ -289,6 +359,11 @@ window._editarPublicado = function(id, data) {
   document.getElementById('editWhatsapp').value = data.whatsapp || '';
   document.getElementById('editInstagram').value = data.instagram || '';
   document.getElementById('editBeneficio').value = data.beneficio || '';
+  document.getElementById('editPlan').value = data.plan || 'free';
+  document.getElementById('editDescripcionExtendida').value = data.descripcionExtendida || '';
+  currentGaleria = Array.isArray(data.galeria) ? [...data.galeria] : [];
+  renderGaleriaPreview();
+  updateEditPlanVisibility();
   document.getElementById('editImage').value = data.image || '';
   showEditImagePreview(data.image || '');
   document.getElementById('editModal').classList.add('active');
@@ -325,6 +400,9 @@ window.saveModal = async function() {
     whatsapp,
     instagram,
     beneficio: document.getElementById('editBeneficio').value.trim(),
+    plan: document.getElementById('editPlan').value,
+    descripcionExtendida: document.getElementById('editDescripcionExtendida').value.trim(),
+    galeria: currentGaleria,
     image: document.getElementById('editImage').value.trim(),
     color: 'color-1',
     pendiente: false,
@@ -377,6 +455,7 @@ window.closeEditModal = function() {
   currentEditId = null;
   currentEditCollection = null;
   isApproving = false;
+  currentGaleria = [];
   document.getElementById('btnSaveModal').disabled = false;
   document.getElementById('editUploadProgress').style.display = 'none';
 };

@@ -85,6 +85,30 @@
       <select id="editSubcategoria"></select>
     </div>
     <div class="form-group">
+      <label>Plan</label>
+      <p class="field-hint">Cambiar a Estándar/Premium recién cuando confirmes el pago en Mercado Pago.</p>
+      <select id="editPlan" onchange="updateEditPlanVisibility()">
+        <option value="free">Free</option>
+        <option value="estandar">Estándar</option>
+        <option value="premium">Premium</option>
+      </select>
+    </div>
+    <div class="form-group" id="editPremiumGroup" style="display:none">
+      <label>Descripción extendida (para su página exclusiva)</label>
+      <p class="field-hint">Opcional. Si la dejás vacía, se usa la descripción de arriba.</p>
+      <textarea id="editDescripcionExtendida"></textarea>
+    </div>
+    <div class="form-group" id="editGaleriaGroup" style="display:none">
+      <label>Galería de fotos (hasta 10, para su página exclusiva)</label>
+      <p class="field-hint">Subí las fotos que te mande el proveedor por WhatsApp.</p>
+      <input type="file" id="galeriaInput" accept="image/*" multiple onchange="handleGaleriaSelect(event)" />
+      <div id="galeriaProgress" style="display:none">
+        <div class="upload-bar"><div class="upload-bar-fill" id="galeriaBarFill"></div></div>
+        <p id="galeriaStatus"></p>
+      </div>
+      <div id="galeriaPreview" class="galeria-preview"></div>
+    </div>
+    <div class="form-group">
       <label>Descripción (HTML permitido)</label>
       <textarea id="editDescripcion"></textarea>
     </div>
