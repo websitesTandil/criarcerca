@@ -50,6 +50,7 @@ let currentEditId = null;
 let currentEditCollection = null;
 let isApproving = false;
 let currentGaleria = [];
+let currentPlanDesde = '';
 
 // ── Mostrar/ocultar campos exclusivos de Premium (galería + descripción extendida) ──
 window.updateEditPlanVisibility = function() {
@@ -332,6 +333,7 @@ window._aprobar = function(id, data) {
   document.getElementById('editInstagram').value = data.instagram || '';
   document.getElementById('editBeneficio').value = data.beneficio || '';
   document.getElementById('editPlan').value = data.planSolicitado || 'free';
+  currentPlanDesde = '';
   document.getElementById('editDescripcionExtendida').value = '';
   currentGaleria = [];
   renderGaleriaPreview();
@@ -360,6 +362,7 @@ window._editarPublicado = function(id, data) {
   document.getElementById('editInstagram').value = data.instagram || '';
   document.getElementById('editBeneficio').value = data.beneficio || '';
   document.getElementById('editPlan').value = data.plan || 'free';
+  currentPlanDesde = data.planDesde || '';
   document.getElementById('editDescripcionExtendida').value = data.descripcionExtendida || '';
   currentGaleria = Array.isArray(data.galeria) ? [...data.galeria] : [];
   renderGaleriaPreview();
@@ -388,6 +391,13 @@ window.saveModal = async function() {
   btn.disabled = true;
   btn.textContent = 'Guardando...';
 
+  // planDesde: cuándo se activó el plan pago. Ordena los destacados (primero el
+  // que se activó antes). Pasar de Estándar a Premium conserva la fecha; volver a
+  // Free la borra.
+  const plan = document.getElementById('editPlan').value;
+  const isPaid = plan === 'estandar' || plan === 'premium';
+  const planDesde = isPaid ? (currentPlanDesde || new Date().toISOString()) : '';
+
   const providerData = {
     name: document.getElementById('editNombre').value.trim(),
     negocio: document.getElementById('editNegocio').value.trim(),
@@ -400,7 +410,8 @@ window.saveModal = async function() {
     whatsapp,
     instagram,
     beneficio: document.getElementById('editBeneficio').value.trim(),
-    plan: document.getElementById('editPlan').value,
+    plan,
+    planDesde,
     descripcionExtendida: document.getElementById('editDescripcionExtendida').value.trim(),
     galeria: currentGaleria,
     image: document.getElementById('editImage').value.trim(),
@@ -456,6 +467,7 @@ window.closeEditModal = function() {
   currentEditCollection = null;
   isApproving = false;
   currentGaleria = [];
+  currentPlanDesde = '';
   document.getElementById('btnSaveModal').disabled = false;
   document.getElementById('editUploadProgress').style.display = 'none';
 };

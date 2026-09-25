@@ -25,6 +25,7 @@ function trackView(p) {
   gtag('event', 'ver_proveedor', {
     proveedor_nombre: p.name,
     proveedor_categoria: p.category,
+    origen: 'pagina_completa',
   });
 }
 
@@ -34,6 +35,7 @@ function trackContact(p, canal) {
     proveedor_nombre: p.name,
     proveedor_categoria: p.category,
     canal_contacto: canal,
+    origen: 'pagina_completa',
     traffic_source: document.referrer ? new URL(document.referrer).hostname : '(direct)'
   });
 }

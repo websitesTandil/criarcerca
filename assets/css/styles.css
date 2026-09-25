@@ -1477,6 +1477,13 @@
   color: var(--green-deep);
   margin-bottom: 6px;
 }
+.destacado-body p.destacado-negocio {
+  color: var(--terracotta);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
 .destacado-location {
   font-size: 0.78rem;
   color: var(--text-muted);

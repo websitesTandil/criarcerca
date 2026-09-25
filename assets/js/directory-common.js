@@ -59,9 +59,11 @@ export function isFeatured(p) {
   return p.plan === 'estandar' || p.plan === 'premium';
 }
 
-// Premium primero, después el orden de alta.
+// Orden de activación del plan (planDesde, lo carga el panel al activarlo): el
+// que se activó primero va primero. Los que no tienen fecha van al final, en su
+// orden de alta.
 export function sortFeatured(list) {
-  return [...list].sort((a, b) => (a.plan === 'premium' ? 0 : 1) - (b.plan === 'premium' ? 0 : 1));
+  return [...list].sort((a, b) => (a.planDesde || '9999').localeCompare(b.planDesde || '9999'));
 }
 
 // Tarjeta del carrusel de destacados (home y parte superior de cada categoría).
@@ -76,6 +78,7 @@ export function destacadoCardHtml(p) {
       <div class="destacado-body">
         <span class="destacado-cat">${displayLabel(p)}</span>
         <h3>${p.name}</h3>
+        ${p.negocio ? `<p class="destacado-negocio">${p.negocio}</p>` : ''}
         <span class="destacado-location">📍 ${p.location}</span>
       </div>
     </div>`;
@@ -87,8 +90,8 @@ export function destacadoCardHtml(p) {
 export function destacadoWideHtml(p) {
   const useInstagram = p.noWhatsapp && p.instagram;
   const contact = useInstagram
-    ? `<a class="dw-btn" href="https://instagram.com/${p.instagram.replace('@', '')}" target="_blank" onclick="window._trackContactLink('${p.id}','instagram')">Ver en Instagram</a>`
-    : `<a class="dw-btn" href="https://wa.me/${whatsappNumber(p.whatsapp)}?text=${encodeURIComponent('Hola! Te contacto desde Criar Cerca 🌿')}" target="_blank" onclick="window._trackContactLink('${p.id}','whatsapp')">Contactar por WhatsApp</a>`;
+    ? `<a class="dw-btn" href="https://instagram.com/${p.instagram.replace('@', '')}" target="_blank" onclick="window._trackContactLink('${p.id}','instagram','destacado_categoria')">Ver en Instagram</a>`
+    : `<a class="dw-btn" href="https://wa.me/${whatsappNumber(p.whatsapp)}?text=${encodeURIComponent('Hola! Te contacto desde Criar Cerca 🌿')}" target="_blank" onclick="window._trackContactLink('${p.id}','whatsapp','destacado_categoria')">Contactar por WhatsApp</a>`;
 
   return `
     <article class="destacado-wide">
@@ -105,7 +108,7 @@ export function destacadoWideHtml(p) {
         ${p.beneficio ? `<div class="modal-benefit">🎁 <strong>Beneficio por contactar desde Criar Cerca:</strong> ${p.beneficio}</div>` : ''}
         <div class="dw-info">
           <span>📍 ${p.location}</span>
-          ${p.instagram ? `<a href="https://instagram.com/${p.instagram.replace('@', '')}" target="_blank" onclick="window._trackContactLink('${p.id}','instagram')">${p.instagram}</a>` : ''}
+          ${p.instagram ? `<a href="https://instagram.com/${p.instagram.replace('@', '')}" target="_blank" onclick="window._trackContactLink('${p.id}','instagram','destacado_categoria')">${p.instagram}</a>` : ''}
         </div>
         <div class="dw-actions">
           ${contact}
@@ -139,44 +142,50 @@ export function initDescToggles() {
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(checkDescOverflow);
 }
 
-export function trackProviderView(provider) {
+// origen: desde dónde llegó la vista o el click (destacado_home,
+// destacado_categoria, listado, pagina_completa). Sirve para medir cuánto
+// aportan los destacados.
+export function trackProviderView(provider, origen = 'listado') {
   if (typeof gtag !== 'function') return;
   gtag('event', 'ver_proveedor', {
     proveedor_nombre: provider.name,
     proveedor_categoria: provider.category,
+    origen,
   });
 }
 
-export function trackProviderContact(provider, canal) {
+export function trackProviderContact(provider, canal, origen = 'listado') {
   if (typeof gtag !== 'function') return;
   gtag('event', 'contacto_proveedor', {
     proveedor_nombre: provider.name,
     proveedor_categoria: provider.category,
     canal_contacto: canal,
+    origen,
     traffic_source: document.referrer ? new URL(document.referrer).hostname : '(direct)'
   });
 }
 
 // Instala en window los handlers del modal de detalle. getProviderById(id) debe
 // devolver el provider correspondiente desde el estado de la página que lo llama.
-export function setupModal(getProviderById) {
+// origen: de dónde se abre el modal (en la home, el carrusel de destacados).
+export function setupModal(getProviderById, origen = 'listado') {
   window._trackInstagramLink = function(id) {
     const p = getProviderById(id);
     if (!p) return;
-    trackProviderContact(p, 'instagram');
+    trackProviderContact(p, 'instagram', origen);
   };
 
-  window._trackContactLink = function(id, canal) {
+  window._trackContactLink = function(id, canal, origenLink = origen) {
     const p = getProviderById(id);
     if (!p) return;
-    trackProviderContact(p, canal);
+    trackProviderContact(p, canal, origenLink);
   };
 
   window._openModal = function(id) {
     const p = getProviderById(id);
     if (!p) return;
 
-    trackProviderView(p);
+    trackProviderView(p, origen);
 
     const modalHeader = document.getElementById('modalHeader');
     modalHeader.className = `modal-header ${p.image ? '' : (p.color || 'color-1')}`;
@@ -211,11 +220,11 @@ export function setupModal(getProviderById) {
     if (p.noWhatsapp && p.instagram) {
       contactBtn.href = `https://instagram.com/${p.instagram.replace('@', '')}`;
       contactBtn.textContent = 'Ver en Instagram';
-      contactBtn.onclick = () => trackProviderContact(p, 'instagram');
+      contactBtn.onclick = () => trackProviderContact(p, 'instagram', origen);
     } else {
       contactBtn.href = `https://wa.me/${whatsappNumber(p.whatsapp)}?text=Hola! Te contacto desde Criar Cerca 🌿`;
       contactBtn.textContent = 'Contactar por WhatsApp';
-      contactBtn.onclick = () => trackProviderContact(p, 'whatsapp');
+      contactBtn.onclick = () => trackProviderContact(p, 'whatsapp', origen);
     }
 
     document.getElementById('modalOverlay').classList.add('active');

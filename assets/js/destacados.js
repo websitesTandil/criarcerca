@@ -13,7 +13,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 let destacados = [];
-setupModal(id => destacados.find(x => x.id === id));
+setupModal(id => destacados.find(x => x.id === id), 'destacado_home');
 
 async function loadDestacados() {
   const section = document.getElementById('destacadosSection');
