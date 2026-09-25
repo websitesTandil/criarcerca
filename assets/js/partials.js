@@ -98,7 +98,7 @@ export function mountCategoryPills(currentCategory, basePath = '') {
     })
     .join('');
 
-  nav.innerHTML = `${pills}<a class="filter-btn" href="${basePath}servicios.html">Ver todos</a>`;
+  nav.innerHTML = `<a class="filter-btn" href="${basePath}servicios.html">Ver todos</a>${pills}`;
 }
 
 // Archivo de /categorias/ que corresponde a una categoría (para armar links).
