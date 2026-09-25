@@ -315,6 +315,14 @@ async function loadPublicados() {
   }
 }
 
+// Abre el modal de edición siempre desde arriba: la caja tiene su propio scroll
+// y, si no se reinicia, reabre donde se la dejó la vez anterior.
+function openEditModal() {
+  const overlay = document.getElementById("editModal");
+  overlay.classList.add("active");
+  overlay.querySelector(".modal-edit").scrollTop = 0;
+}
+
 // ── APROBAR → abre modal pre-cargado ──
 window._aprobar = function(id, data) {
   currentEditId = id;
@@ -341,7 +349,7 @@ window._aprobar = function(id, data) {
   document.getElementById('editImage').value = data.image || '';
   showEditImagePreview(data.image || '');
 
-  document.getElementById('editModal').classList.add('active');
+  openEditModal();
 };
 
 // ── EDITAR PUBLICADO ──
@@ -369,7 +377,7 @@ window._editarPublicado = function(id, data) {
   updateEditPlanVisibility();
   document.getElementById('editImage').value = data.image || '';
   showEditImagePreview(data.image || '');
-  document.getElementById('editModal').classList.add('active');
+  openEditModal();
 };
 
 // ── GUARDAR MODAL ──
