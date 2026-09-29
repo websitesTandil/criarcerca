@@ -225,13 +225,13 @@ window.toggleBenefitFilter = function() {
 setupModal(id => providers.find(x => x.id === id));
 
 // Las FAQ quedan al final de la página, después de todas las tarjetas, y en las
-// categorías grandes cuesta llegar. Se agrega un acceso directo al final del intro.
+// categorías grandes cuesta llegar. Se agrega un acceso directo bajo el subtítulo.
 function addFaqJumpLink() {
   const faq = document.querySelector('.faq-section');
-  const intro = document.querySelector('.category-intro');
-  if (!faq || !intro) return;
+  const subtitle = document.querySelector('.search-section p');
+  if (!faq || !subtitle) return;
   faq.id = 'faq';
-  intro.insertAdjacentHTML('beforeend', '<a class="faq-jump" href="#faq">Preguntas frecuentes ↓</a>');
+  subtitle.insertAdjacentHTML('afterend', '<a class="faq-jump" href="#faq">Preguntas frecuentes ↓</a>');
 }
 
 addFaqJumpLink();
