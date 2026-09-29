@@ -1303,6 +1303,28 @@
   letter-spacing: 0.3px;
 }
 .destacado-card { cursor: pointer; }
+
+/* Placeholder mientras carga Firestore: mismo tamaño que la tarjeta real, para
+   que no haya salto ni hueco vacío mientras se puede ver el destacado. */
+.skeleton-line {
+  height: 10px;
+  border-radius: 4px;
+  background: var(--sand);
+}
+.skeleton-line.title { height: 16px; width: 70%; margin: 10px 0 8px; }
+.skeleton-line.short { width: 45%; }
+.destacado-skeleton,
+.destacado-skeleton .destacado-image {
+  animation: skeleton-pulse 1.3s ease-in-out infinite;
+  cursor: default;
+}
+.destacado-skeleton .destacado-image { background: var(--sand); }
+.destacado-wide.destacado-skeleton-wide {
+  animation: skeleton-pulse 1.3s ease-in-out infinite;
+  border-color: var(--sand);
+}
+.destacado-wide.destacado-skeleton-wide .dw-image { background: var(--sand); }
+@keyframes skeleton-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 .destacado-benefit {
   position: absolute;
   top: 10px; left: 10px;

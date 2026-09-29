@@ -15,10 +15,28 @@ const db = getFirestore(app);
 let destacados = [];
 setupModal(id => destacados.find(x => x.id === id), 'destacado_home');
 
+function skeletonCardHtml() {
+  return `
+    <div class="destacado-card destacado-skeleton">
+      <div class="destacado-image"></div>
+      <div class="destacado-body">
+        <span class="skeleton-line short"></span>
+        <div class="skeleton-line title"></div>
+        <span class="skeleton-line short"></span>
+      </div>
+    </div>`;
+}
+
 async function loadDestacados() {
   const section = document.getElementById('destacadosSection');
   const track = document.getElementById('destacadosTrack');
   if (!section || !track) return;
+
+  // Se muestra un placeholder desde el primer instante y la sección queda visible
+  // de una: la consulta a Firestore tarda un momento, y si la sección aparece recién
+  // cuando termina, alguien que ya venía bajando se la puede perder por completo.
+  track.innerHTML = Array(3).fill(skeletonCardHtml()).join('');
+  section.style.display = 'block';
 
   try {
     // Misma consulta que servicios.js (pendiente==false + orderBy fechaCreacion),
@@ -29,12 +47,15 @@ async function loadDestacados() {
       snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(isFeatured)
     );
 
-    if (destacados.length === 0) return;
+    if (destacados.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
 
     track.innerHTML = destacados.map(destacadoCardHtml).join('');
-    section.style.display = 'block';
   } catch (err) {
     console.error('Error cargando destacados:', err);
+    section.style.display = 'none';
   }
 }
 

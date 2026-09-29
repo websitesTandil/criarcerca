@@ -32,6 +32,29 @@ let currentSubcategory = FIXED_SUBCATEGORY || validParamSub;
 let currentSearch = '';
 let onlyBenefit = false;
 
+// Placeholder que se ve desde el primer instante, antes de que responda Firestore:
+// sin esto la franja de destacados queda invisible mientras carga (el buscador, los
+// filtros y el spinner de la grilla sí se ven de una) y alguien que ya viene bajando
+// se la puede perder por completo.
+function renderDestacadosSkeleton() {
+  const wrap = document.createElement('div');
+  wrap.id = 'categoryDestacados';
+  wrap.className = 'category-destacados';
+  wrap.innerHTML = `
+    <h3>Destacados ✨</h3>
+    <div class="destacados-list">
+      <div class="destacado-wide destacado-skeleton-wide">
+        <div class="dw-image"></div>
+        <div class="dw-body">
+          <span class="skeleton-line short" style="display:block;margin-bottom:10px"></span>
+          <div class="skeleton-line title"></div>
+          <span class="skeleton-line short" style="display:block"></span>
+        </div>
+      </div>
+    </div>`;
+  document.querySelector('.providers-section .section-header').insertAdjacentElement('afterend', wrap);
+}
+
 async function loadProviders() {
   try {
     const q = query(
@@ -213,6 +236,7 @@ function addFaqJumpLink() {
 
 addFaqJumpLink();
 addSearchBar();
+renderDestacadosSkeleton();
 
 observeFadeIns();
 
