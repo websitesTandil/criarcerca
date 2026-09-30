@@ -112,7 +112,7 @@ export function destacadoWideHtml(p) {
         </div>
         <div class="dw-actions">
           ${contact}
-          ${p.plan === 'premium' ? `<a class="dw-more" href="/negocio.html?id=${p.id}">Ver página completa →</a>` : ''}
+          ${p.plan === 'premium' ? `<a class="dw-more" href="/negocio.html?id=${p.id}">Ver más info →</a>` : ''}
         </div>
       </div>
     </article>`;
@@ -213,7 +213,7 @@ export function setupModal(getProviderById, origen = 'listado') {
         <span class="label">Instagram</span>
         <a href="https://instagram.com/${p.instagram.replace('@','')}" target="_blank" style="color:var(--green-mid)" onclick="window._trackInstagramLink('${p.id}')">${p.instagram}</a>
       </div>` : ''}
-      ${p.plan === 'premium' ? `<a href="/negocio.html?id=${p.id}" class="modal-page-link">Ver página completa →</a>` : ''}
+      ${p.plan === 'premium' ? `<a href="/negocio.html?id=${p.id}" class="modal-page-link">Ver más info →</a>` : ''}
     `;
 
     const contactBtn = document.getElementById('modalContact');
