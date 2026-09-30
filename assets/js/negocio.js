@@ -123,7 +123,7 @@ async function loadNegocio() {
 
     if (Array.isArray(p.galeria) && p.galeria.length > 0) {
       const gallery = document.getElementById('negocioGallery');
-      gallery.style.display = 'grid';
+      gallery.style.display = 'flex';
       gallery.innerHTML = p.galeria.map((url, i) => `
         <button type="button" class="negocio-gallery-item" onclick="window.openLightbox(${i})">
           <img src="${url}" alt="${p.name} — foto ${i + 1}" />

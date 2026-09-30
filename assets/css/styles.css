@@ -1603,13 +1603,18 @@
   margin-bottom: 32px;
   white-space: pre-line;
 }
+/* Flex en vez de grid: así, si la última fila queda incompleta (por ejemplo
+   10 fotos = 4+4+2), esas fotos quedan centradas en vez de pegadas a la
+   izquierda con un hueco vacío al lado. */
 .negocio-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 14px;
   margin-bottom: 32px;
 }
 .negocio-gallery-item {
+  flex: 0 1 180px;
   aspect-ratio: 1;
   border-radius: 14px;
   overflow: hidden;
@@ -1618,6 +1623,9 @@
   padding: 0;
   background: none;
   display: block;
+}
+@media (max-width: 600px) {
+  .negocio-gallery-item { flex-basis: calc(50% - 7px); }
 }
 .negocio-gallery-item img {
   width: 100%;
@@ -1694,6 +1702,7 @@
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
+  margin-bottom: 32px;
 }
 .negocio-contact {
   display: inline-block;
