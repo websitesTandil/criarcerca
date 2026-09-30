@@ -61,6 +61,15 @@
 <!-- FOOTER -->
 <footer id="siteFooter"></footer>
 
+<!-- VISOR DE FOTOS -->
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightboxBtn()" aria-label="Cerrar">✕</button>
+  <button class="lightbox-nav lightbox-prev" onclick="lightboxNav(-1, event)" aria-label="Foto anterior">‹</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="" />
+  <button class="lightbox-nav lightbox-next" onclick="lightboxNav(1, event)" aria-label="Foto siguiente">›</button>
+  <span class="lightbox-counter" id="lightboxCounter"></span>
+</div>
+
 <!-- WhatsApp Flotante -->
 <div id="siteWhatsapp"></div>
 
