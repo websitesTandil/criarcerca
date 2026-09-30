@@ -68,8 +68,12 @@ export function sortFeatured(list) {
 
 // Tarjeta del carrusel de destacados (home y parte superior de cada categoría).
 export function destacadoCardHtml(p) {
+  // Premium tiene página propia: va directo ahí en vez de abrir el modal.
+  const isPremium = p.plan === 'premium';
+  const tag = isPremium ? 'a' : 'div';
+  const linkAttr = isPremium ? `href="/negocio.html?id=${p.id}"` : `onclick="window._openModal('${p.id}')"`;
   return `
-    <div class="destacado-card" onclick="window._openModal('${p.id}')">
+    <${tag} class="destacado-card" ${linkAttr}>
       <div class="destacado-image ${p.image ? '' : (p.color || 'color-1')}">
         ${p.image ? `<img src="${p.image}" alt="${p.name}" />` : `<span>${p.emoji || '🌿'}</span>`}
         ${p.plan === 'premium' ? `<span class="destacado-tag">✨ Premium</span>` : ''}
@@ -81,7 +85,7 @@ export function destacadoCardHtml(p) {
         ${p.negocio ? `<p class="destacado-negocio">${p.negocio}</p>` : ''}
         <span class="destacado-location">📍 ${p.location}</span>
       </div>
-    </div>`;
+    </${tag}>`;
 }
 
 // Tarjeta ancha de destacado para la página de categoría: muestra la misma
