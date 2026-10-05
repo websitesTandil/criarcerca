@@ -36,7 +36,14 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-S4E7W0PR5W');
+  var cfg = {};
+  try {
+    var q = new URLSearchParams(location.search).get('internal');
+    if (q === '1') localStorage.setItem('cc_internal', '1');
+    if (q === '0') localStorage.removeItem('cc_internal');
+    if (localStorage.getItem('cc_internal') === '1' || /^(localhost|127.0.0.1)$/.test(location.hostname)) cfg.traffic_type = 'internal';
+  } catch (e) {}
+  gtag('config', 'G-S4E7W0PR5W', cfg);
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/styles.css">
