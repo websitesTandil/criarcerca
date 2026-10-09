@@ -295,6 +295,17 @@
     margin-bottom: 20px;
   }
 
+  .search-hint {
+    max-width: 560px;
+    margin: -16px auto 28px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+  .search-bar.list-search + .search-hint {
+    margin-bottom: 20px;
+  }
+
   .category-filters {
     display: flex;
     gap: 10px;
@@ -678,6 +689,82 @@
   .form-group select:focus,
   .form-group textarea:focus {
     border-color: var(--blush);
+  }
+
+  .multiselect {
+    position: relative;
+  }
+  .multiselect-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(200,219,200,0.2);
+    border-radius: 12px;
+    padding: 13px 16px;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    text-align: left;
+    cursor: pointer;
+  }
+  .multiselect-trigger-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0.85;
+  }
+  .multiselect[aria-expanded="true"] .multiselect-trigger,
+  .multiselect-trigger[aria-expanded="true"] {
+    border-color: var(--blush);
+  }
+  .multiselect-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    background: var(--green-deep);
+    border: 1px solid rgba(200,219,200,0.25);
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 260px;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+  .multiselect-panel[hidden] { display: none; }
+  .multiselect-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--green-pale);
+    cursor: pointer;
+    padding: 7px 6px;
+    border-radius: 8px;
+  }
+  .multiselect-option:hover { background: rgba(255,255,255,0.06); }
+  .multiselect-option input {
+    width: auto;
+    accent-color: var(--blush);
+    cursor: pointer;
+  }
+  .multiselect-done {
+    margin-top: 4px;
+    align-self: flex-end;
+    background: none;
+    border: none;
+    color: var(--blush);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 10px;
   }
 
   .form-group textarea { resize: vertical; min-height: 100px; }

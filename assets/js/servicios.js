@@ -5,7 +5,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./config.js";
 import { CATEGORIES } from "./categories.js";
-import { providerCardHtml, setupModal, observeFadeIns, matchesSearch } from "./directory-common.js";
+import { providerCardHtml, setupModal, observeFadeIns, matchesSearch, categoriesOf } from "./directory-common.js";
 import { mountPartials, categoryPageFor } from "./partials.js";
 
 mountPartials('');
@@ -55,7 +55,7 @@ function renderProviders() {
   }
 
   let filtered = allProviders.filter(p => {
-    const matchCat = currentCategory === 'todos' || p.category === currentCategory;
+    const matchCat = currentCategory === 'todos' || categoriesOf(p).includes(currentCategory);
     const matchBenefit = !onlyBenefit || !!p.beneficio;
     return matchCat && matchBenefit && matchesSearch(p, currentSearch);
   });
@@ -70,7 +70,8 @@ function renderProviders() {
   }
 
   empty.style.display = 'none';
-  grid.innerHTML = filtered.map(providerCardHtml).join('');
+  const context = currentCategory !== 'todos' ? currentCategory : undefined;
+  grid.innerHTML = filtered.map(p => providerCardHtml(p, context)).join('');
 
   setTimeout(() => {
     document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
@@ -91,7 +92,7 @@ function renderCategoryFilters() {
 }
 
 // ── Modal + tracking (compartido con las páginas de categoría) ──
-setupModal(id => allProviders.find(x => x.id === id));
+setupModal(id => allProviders.find(x => x.id === id), 'listado', () => currentCategory !== 'todos' ? currentCategory : undefined);
 
 window.setCategory = function(cat, btn) {
   currentCategory = cat;

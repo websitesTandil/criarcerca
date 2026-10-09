@@ -5,34 +5,38 @@ import {
 import { firebaseConfig, emailjsConfig, cloudinaryConfig } from "./config.js";
 import { CATEGORIES } from "./categories.js";
 import { subcategoriesFor } from "./subcategories.js";
+import { createMultiSelect } from "./multiselect.js";
 
 emailjs.init(emailjsConfig.publicKey);
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ── Pintar opciones de categoría  ──
-document.getElementById('categoria').insertAdjacentHTML('beforeend',
-  CATEGORIES.map(c => `<option value="${c.value}">${c.emoji} ${c.label}</option>`).join('')
-);
+// ── Selector de categorías (elegís una o más de una vez) ──
+const categoriaSelect = createMultiSelect(document.getElementById('categoriaSelect'), CATEGORIES, {
+  placeholder: 'Seleccioná una o más categorías',
+  onChange: updateSubcategoriaVisibility
+});
 
-// ── Mostrar subcategoría solo si la categoría elegida tiene ──
-window.updateSubcategoria = function() {
-  const categoria = document.getElementById('categoria').value;
+// ── Subcategoría de fiestas: solo aparece si "fiestas" está entre las elegidas ──
+let subcategoriaSelect = null;
+function updateSubcategoriaVisibility() {
+  const categorias = categoriaSelect.getValue();
   const group = document.getElementById('subcategoriaGroup');
-  const select = document.getElementById('subcategoria');
-  const options = subcategoriesFor(categoria);
+  const options = subcategoriesFor('fiestas');
 
-  if (options.length === 0) {
+  if (!categorias.includes('fiestas') || options.length === 0) {
     group.style.display = 'none';
-    select.innerHTML = '<option value="">Seleccioná una opción</option>';
     return;
   }
 
   group.style.display = 'block';
-  select.innerHTML = '<option value="">Seleccioná una opción</option>' +
-    options.map(s => `<option value="${s.value}">${s.label}</option>`).join('');
-};
+  if (!subcategoriaSelect) {
+    subcategoriaSelect = createMultiSelect(document.getElementById('subcategoriaSelect'), options, {
+      placeholder: 'Seleccioná una o más opciones'
+    });
+  }
+}
 
 // ── Cloudinary upload ──
 let selectedImageFile = null;
@@ -101,8 +105,10 @@ async function uploadToCloudinary(file) {
 window.submitForm = async function() {
   const nombre = document.getElementById('nombre').value.trim();
   const negocio = document.getElementById('negocio').value.trim();
-  const categoria = document.getElementById('categoria').value;
-  const subcategoria = document.getElementById('subcategoria').value;
+  const categorias = categoriaSelect.getValue();
+  const categoria = categorias[0] || '';
+  const subcategorias = categorias.includes('fiestas') && subcategoriaSelect ? subcategoriaSelect.getValue() : [];
+  const subcategoria = subcategorias[0] || '';
   const ubicacion = document.getElementById('ubicacion').value.trim();
   const whatsapp = document.getElementById('whatsapp').value.trim();
   const descripcion = document.getElementById('descripcion').value.trim();
@@ -124,7 +130,7 @@ window.submitForm = async function() {
     return;
   }
 
-  if (subcategoriesFor(categoria).length > 0 && !subcategoria) {
+  if (categorias.includes('fiestas') && subcategorias.length === 0) {
     alert('Por favor seleccioná qué tipo de servicio para fiestas ofrecés.');
     return;
   }
@@ -145,7 +151,9 @@ window.submitForm = async function() {
       nombre,
       negocio,
       categoria,
-      subcategoria: subcategoria || '',
+      categorias,
+      subcategoria,
+      subcategorias,
       location: ubicacion,
       whatsapp,
       instagram,

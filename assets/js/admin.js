@@ -10,16 +10,23 @@ import {
 import { firebaseConfig, cloudinaryConfig } from "./config.js";
 import { CATEGORIES, categoryLabel } from "./categories.js";
 import { subcategoriesFor, subcategoryLabel } from "./subcategories.js";
+import { createMultiSelect } from "./multiselect.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// ── Pintar opciones de categoría ──
-document.getElementById('editCategoria').insertAdjacentHTML('beforeend',
-  CATEGORIES.map(c => `<option value="${c.value}">${c.emoji} ${c.label}</option>`).join('')
-);
+// ── Selector de categorías del modal (elegís una o más de una vez) ──
+const editCategoriaSelect = createMultiSelect(document.getElementById('editCategoriaSelect'), CATEGORIES, {
+  placeholder: 'Seleccioná una o más categorías',
+  onChange: () => updateEditSubcategoriaVisibility()
+});
+
+// ── "+ 2 categorías" junto al badge, si además aparece en otras ──
+function extraCategoriasSuffix(extra) {
+  return extra && extra.length > 0 ? ` +${extra.map(categoryLabel).join(', ')}` : '';
+}
 
 // ── Badge de "pidió un plan pago" en la tarjeta de solicitud ──
 const PLAN_REQUEST_LABELS = { estandar: 'Quiere: Estándar', premium: 'Quiere: Premium' };
@@ -28,23 +35,26 @@ function planRequestBadge(planSolicitado) {
   return label ? `<div class="card-badge-plan">💳 ${label}</div>` : '';
 }
 
-// ── Mostrar/pintar subcategoría según la categoría elegida en el modal ──
-window.updateEditSubcategoria = function(preselect = '') {
-  const categoria = document.getElementById('editCategoria').value;
+// ── Mostrar/pintar subcategoría (fiestas) según las categorías elegidas ──
+let editSubcategoriaSelect = null;
+function updateEditSubcategoriaVisibility(preselect = []) {
+  const categorias = editCategoriaSelect.getValue();
   const group = document.getElementById('editSubcategoriaGroup');
-  const select = document.getElementById('editSubcategoria');
-  const options = subcategoriesFor(categoria);
+  const options = subcategoriesFor('fiestas');
 
-  if (options.length === 0) {
+  if (!categorias.includes('fiestas') || options.length === 0) {
     group.style.display = 'none';
-    select.innerHTML = '';
     return;
   }
 
   group.style.display = 'block';
-  select.innerHTML = options.map(s => `<option value="${s.value}">${s.label}</option>`).join('');
-  if (preselect) select.value = preselect;
-};
+  if (!editSubcategoriaSelect) {
+    editSubcategoriaSelect = createMultiSelect(document.getElementById('editSubcategoriaSelect'), options, {
+      placeholder: 'Seleccioná una o más opciones'
+    });
+  }
+  if (preselect.length > 0) editSubcategoriaSelect.setValue(preselect);
+}
 
 let currentEditId = null;
 let currentEditCollection = null;
@@ -249,7 +259,7 @@ async function loadSolicitudes() {
       <div class="card" id="sol-${s.id}">
         ${s.image ? `<div class="card-thumb"><img src="${s.image}" alt="${s.negocio}" /></div>` : ''}
         <div class="card-info">
-          <div class="card-badge">${categoryLabel(s.categoria)}${s.subcategoria ? ' · ' + subcategoryLabel(s.categoria, s.subcategoria) : ''}</div>${planRequestBadge(s.planSolicitado)}
+          <div class="card-badge">${categoryLabel(s.categoria)}${s.subcategoria ? ' · ' + subcategoryLabel(s.categoria, s.subcategoria) : ''}${extraCategoriasSuffix((s.categorias || []).slice(1))}</div>${planRequestBadge(s.planSolicitado)}
           <div class="card-name">${s.nombre || s.negocio}${s.negocio ? ` — ${s.negocio}` : ''}</div>
           <div class="card-meta">
             ${s.location ? `📍 ${s.location} · ` : ''}📱 ${s.whatsapp}
@@ -290,7 +300,7 @@ async function loadPublicados() {
     lista.innerHTML = docs.map(p => `
       <div class="card" id="pub-${p.id}">
         <div class="card-info">
-          <div class="card-badge">${categoryLabel(p.category)}${p.subcategoria ? ' · ' + subcategoryLabel(p.category, p.subcategoria) : ''}</div>
+          <div class="card-badge">${categoryLabel(p.category)}${p.subcategoria ? ' · ' + subcategoryLabel(p.category, p.subcategoria) : ''}${extraCategoriasSuffix((p.categories || []).filter(c => c !== p.category))}</div>
           <div class="card-name">${p.name}${p.negocio ? ` — ${p.negocio}` : ''}</div>
           <div class="card-meta">
             📍 ${p.location}
@@ -333,8 +343,8 @@ window._aprobar = function(id, data) {
   document.getElementById('btnSaveModal').textContent = 'Publicar en el directorio ✓';
   document.getElementById('editNombre').value = data.nombre || data.negocio || '';
   document.getElementById('editNegocio').value = data.negocio || '';
-  document.getElementById('editCategoria').value = data.categoria || 'otros';
-  updateEditSubcategoria(data.subcategoria || '');
+  editCategoriaSelect.setValue(data.categorias && data.categorias.length > 0 ? data.categorias : [data.categoria || 'otros']);
+  updateEditSubcategoriaVisibility(data.subcategorias && data.subcategorias.length > 0 ? data.subcategorias : (data.subcategoria ? [data.subcategoria] : []));
   document.getElementById('editDescripcion').value = data.descripcion || '';
   document.getElementById('editLocation').value = data.location || 'Tandil';
   document.getElementById('editWhatsapp').value = data.whatsapp || '';
@@ -362,8 +372,8 @@ window._editarPublicado = function(id, data) {
   document.getElementById('btnSaveModal').textContent = 'Guardar cambios';
   document.getElementById('editNombre').value = data.name || '';
   document.getElementById('editNegocio').value = data.negocio || '';
-  document.getElementById('editCategoria').value = data.category || 'otros';
-  updateEditSubcategoria(data.subcategoria || '');
+  editCategoriaSelect.setValue(data.categories && data.categories.length > 0 ? data.categories : [data.category || 'otros']);
+  updateEditSubcategoriaVisibility(data.subcategorias && data.subcategorias.length > 0 ? data.subcategorias : (data.subcategoria ? [data.subcategoria] : []));
   document.getElementById('editDescripcion').value = data.description || '';
   document.getElementById('editLocation').value = data.location || '';
   document.getElementById('editWhatsapp').value = data.whatsapp || '';
@@ -406,13 +416,25 @@ window.saveModal = async function() {
   const isPaid = plan === 'estandar' || plan === 'premium';
   const planDesde = isPaid ? (currentPlanDesde || new Date().toISOString()) : '';
 
+  const categories = editCategoriaSelect.getValue();
+  const subcategorias = categories.includes('fiestas') && editSubcategoriaSelect
+    ? editSubcategoriaSelect.getValue()
+    : [];
+
+  if (categories.length === 0) {
+    alert('Elegí al menos una categoría.');
+    btn.disabled = false;
+    btn.textContent = isApproving ? 'Publicar en el directorio ✓' : 'Guardar cambios';
+    return;
+  }
+
   const providerData = {
     name: document.getElementById('editNombre').value.trim(),
     negocio: document.getElementById('editNegocio').value.trim(),
-    category: document.getElementById('editCategoria').value,
-    subcategoria: document.getElementById('editSubcategoriaGroup').style.display === 'block'
-      ? document.getElementById('editSubcategoria').value
-      : '',
+    category: categories[0],
+    categories,
+    subcategoria: subcategorias[0] || '',
+    subcategorias,
     description: document.getElementById('editDescripcion').value.trim(),
     location: document.getElementById('editLocation').value.trim(),
     whatsapp,

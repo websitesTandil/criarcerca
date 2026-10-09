@@ -6,7 +6,7 @@ import {
 import { firebaseConfig } from "./config.js";
 import {
   providerCardHtml, destacadoWideHtml, initDescToggles, isFeatured, sortFeatured,
-  setupModal, observeFadeIns, matchesSearch
+  setupModal, observeFadeIns, matchesSearch, categoriesOf, subcategoriasOf
 } from "./directory-common.js";
 import { mountPartials, mountCategoryPills, categoryPageFor } from "./partials.js";
 import { subcategoriesFor } from "./subcategories.js";
@@ -57,14 +57,18 @@ function renderDestacadosSkeleton() {
 
 async function loadProviders() {
   try {
+    // Misma consulta que servicios.js/destacados.js (todos los publicados), para
+    // poder filtrar acá por "categories" (puede traer más de una categoría) sin
+    // pedir un índice nuevo en Firestore para cada combinación posible.
     const q = query(
       collection(db, "providers"),
       where("pendiente", "==", false),
-      where("category", "==", CATEGORY),
       orderBy("fechaCreacion", "asc")
     );
     const snapshot = await getDocs(q);
-    providers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    providers = snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(p => categoriesOf(p).includes(CATEGORY));
     renderProviders();
   } catch (err) {
     console.error("Error cargando providers:", err);
@@ -80,7 +84,7 @@ async function loadProviders() {
 // entran los de esa subcategoría.
 function featuredForPage() {
   return sortFeatured(providers.filter(p =>
-    isFeatured(p) && (!FIXED_SUBCATEGORY || p.subcategoria === FIXED_SUBCATEGORY)
+    isFeatured(p) && (!FIXED_SUBCATEGORY || subcategoriasOf(p).includes(FIXED_SUBCATEGORY))
   ));
 }
 
@@ -100,7 +104,7 @@ function renderDestacados() {
   wrap.style.display = 'block';
   wrap.innerHTML = `
     <h3>Destacados ✨</h3>
-    <div class="destacados-list">${featured.map(destacadoWideHtml).join('')}</div>`;
+    <div class="destacados-list">${featured.map(p => destacadoWideHtml(p, CATEGORY)).join('')}</div>`;
   initDescToggles();
 }
 
@@ -121,7 +125,7 @@ function renderProviders() {
 
   // Los destacados van en su franja y no se repiten en la grilla.
   const rest = providers.filter(p => {
-    const matchSubcat = !currentSubcategory || p.subcategoria === currentSubcategory;
+    const matchSubcat = !currentSubcategory || subcategoriasOf(p).includes(currentSubcategory);
     const matchBenefit = !onlyBenefit || !!p.beneficio;
     return !isFeatured(p) && matchSubcat && matchBenefit && matchesSearch(p, currentSearch);
   });
@@ -149,7 +153,7 @@ function renderProviders() {
   }
 
   empty.style.display = 'none';
-  grid.innerHTML = rest.map(providerCardHtml).join('');
+  grid.innerHTML = rest.map(p => providerCardHtml(p, CATEGORY)).join('');
 
   setTimeout(() => {
     document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
@@ -205,9 +209,10 @@ function addSearchBar() {
   if (!anchor) return;
   anchor.insertAdjacentHTML('beforebegin', `
     <div class="search-bar list-search">
-      <input type="text" id="searchInput" placeholder="Buscá por nombre o tipo de servicio..." aria-label="Buscar en el listado" />
+      <input type="text" id="searchInput" placeholder="Buscá por nombre, tipo de servicio o ciudad..." aria-label="Buscar en el listado" />
       <button onclick="filterProviders()">Buscar</button>
-    </div>`);
+    </div>
+    <p class="search-hint">También podés buscar por ciudad, si no sos de Tandil</p>`);
   document.getElementById('searchInput').addEventListener('input', () => window.filterProviders());
 }
 
@@ -222,7 +227,7 @@ window.toggleBenefitFilter = function() {
   renderProviders();
 };
 
-setupModal(id => providers.find(x => x.id === id));
+setupModal(id => providers.find(x => x.id === id), 'listado', CATEGORY);
 
 // Las FAQ quedan al final de la página, después de todas las tarjetas, y en las
 // categorías grandes cuesta llegar. Se agrega un acceso directo bajo el subtítulo.

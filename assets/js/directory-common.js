@@ -1,8 +1,27 @@
 import { categoryLabel } from "./categories.js";
 import { subcategoryLabel } from "./subcategories.js";
 
-function displayLabel(p) {
-  return p.subcategoria ? subcategoryLabel(p.category, p.subcategoria) : categoryLabel(p.category);
+// Todas las categorías de un proveedor. "categories" es la lista completa
+// (incluye la principal); si todavía no la tiene cargada (proveedores viejos,
+// de antes de permitir varias categorías) se usa su única "category" de siempre.
+export function categoriesOf(p) {
+  return Array.isArray(p.categories) && p.categories.length > 0 ? p.categories : [p.category];
+}
+
+export function subcategoriasOf(p) {
+  return Array.isArray(p.subcategorias) && p.subcategorias.length > 0 ? p.subcategorias : [p.subcategoria].filter(Boolean);
+}
+
+// contextCategory: la categoría de la página donde se está mostrando la tarjeta
+// (ej. "alimentos" en /categorias/alimentos-saludables-tandil.html). Si el
+// proveedor aparece ahí por una categoría secundaria, se muestra esa en vez de
+// la principal. La subcategoría (hoy solo existe para "fiestas") solo aplica
+// cuando se está mostrando la categoría principal, que es la única con la que
+// se relaciona al cargar el formulario.
+function displayLabel(p, contextCategory) {
+  const cat = contextCategory || p.category;
+  if (cat === p.category && p.subcategoria) return subcategoryLabel(p.category, p.subcategoria);
+  return categoryLabel(cat);
 }
 
 // Arma el número para wa.me a partir de lo que carga el proveedor. Si empieza
@@ -28,19 +47,21 @@ function normalizeText(s) {
 }
 
 // Búsqueda del listado (servicios.html y páginas de categoría): nombre, negocio,
-// descripción y tipo de servicio. Sin término, todo coincide.
+// descripción, tipo de servicio y ubicación (así alguien de otra ciudad, ej.
+// Balcarce, encuentra a esas proveedoras escribiendo su localidad). Sin
+// término, todo coincide.
 export function matchesSearch(p, term) {
   const q = normalizeText(term).trim();
   if (!q) return true;
-  return normalizeText([p.name, p.negocio, stripHtml(p.description), displayLabel(p)].join(' ')).includes(q);
+  return normalizeText([p.name, p.negocio, stripHtml(p.description), displayLabel(p), p.location].join(' ')).includes(q);
 }
 
-export function providerCardHtml(p) {
+export function providerCardHtml(p, contextCategory) {
   return `
     <div class="provider-card fade-in" onclick="window._openModal('${p.id}')">
       <div class="card-image ${p.image ? '' : (p.color || 'color-1')}">
         ${p.image ? `<img src="${p.image}" alt="${p.name}" />` : `<span>${p.emoji || '🌿'}</span>`}
-        <span class="card-category">${displayLabel(p)}</span>
+        <span class="card-category">${displayLabel(p, contextCategory)}</span>
         ${p.beneficio ? `<span class="card-benefit">🎁 Beneficio</span>` : ''}
       </div>
       <div class="card-body">
@@ -91,7 +112,7 @@ export function destacadoCardHtml(p) {
 // Tarjeta ancha de destacado para la página de categoría: muestra la misma
 // información que el modal (descripción, zona, Instagram, beneficio) y los botones
 // de contacto, sin tener que abrir nada.
-export function destacadoWideHtml(p) {
+export function destacadoWideHtml(p, contextCategory) {
   const useInstagram = p.noWhatsapp && p.instagram;
   const contact = useInstagram
     ? `<a class="dw-btn" href="https://instagram.com/${p.instagram.replace('@', '')}" target="_blank" onclick="window._trackContactLink('${p.id}','instagram','destacado_categoria')">Ver en Instagram</a>`
@@ -104,7 +125,7 @@ export function destacadoWideHtml(p) {
         ${p.plan === 'premium' ? `<span class="destacado-tag">✨ Premium</span>` : ''}
       </div>
       <div class="dw-body">
-        <span class="dw-cat">${displayLabel(p)}</span>
+        <span class="dw-cat">${displayLabel(p, contextCategory)}</span>
         <h4>${p.name}</h4>
         ${p.negocio ? `<p class="dw-negocio">${p.negocio}</p>` : ''}
         <div class="dw-desc">${stripHtml(p.description.replace(/<br\s*\/?>/gi, '\n'))}</div>
@@ -172,7 +193,12 @@ export function trackProviderContact(provider, canal, origen = 'listado') {
 // Instala en window los handlers del modal de detalle. getProviderById(id) debe
 // devolver el provider correspondiente desde el estado de la página que lo llama.
 // origen: de dónde se abre el modal (en la home, el carrusel de destacados).
-export function setupModal(getProviderById, origen = 'listado') {
+// contextCategory: la categoría de la página (igual que en displayLabel). Puede
+// ser un valor fijo o una función que la devuelve, para páginas donde cambia
+// sin volver a instalar el modal (ej. servicios.html al tocar "Otros").
+export function setupModal(getProviderById, origen = 'listado', contextCategory) {
+  const resolveContext = () => typeof contextCategory === 'function' ? contextCategory() : contextCategory;
+
   window._trackInstagramLink = function(id) {
     const p = getProviderById(id);
     if (!p) return;
@@ -204,7 +230,7 @@ export function setupModal(getProviderById, origen = 'listado') {
       document.getElementById('modalEmoji').textContent = p.emoji || '🌿';
     }
 
-    document.getElementById('modalCat').textContent = displayLabel(p);
+    document.getElementById('modalCat').textContent = displayLabel(p, resolveContext());
     document.getElementById('modalName').textContent = p.name;
     const modalNegocio = document.getElementById('modalNegocio');
     modalNegocio.textContent = p.negocio || '';
