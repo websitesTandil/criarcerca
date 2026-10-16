@@ -26,6 +26,7 @@ function headerHtml(basePath) {
     </button>
     <nav>
       <a href="${basePath}servicios.html">Servicios</a>
+      <a href="${basePath}planes.html">Planes</a>
       <a href="${basePath}unirse.html">Unirse</a>
       <a href="${basePath}faq.html">FAQ</a>
       <a href="https://www.instagram.com/criar.cerca" target="_blank">Instagram</a>

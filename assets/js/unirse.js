@@ -38,6 +38,24 @@ function updateSubcategoriaVisibility() {
   }
 }
 
+// ── Plan: viene preseleccionado desde planes.html (?plan=estandar|premium|free) ──
+const PLAN_INFO = {
+  estandar: { label: 'Estándar', precio: '$5.000/mes' },
+  premium: { label: 'Premium', precio: '$10.000/mes' },
+};
+const planSelect = document.getElementById('plan');
+const requestedPlan = new URLSearchParams(window.location.search).get('plan');
+if (requestedPlan === 'free' || PLAN_INFO[requestedPlan]) planSelect.value = requestedPlan;
+
+window.updatePlanBanner = function() {
+  const info = PLAN_INFO[planSelect.value];
+  const banner = document.getElementById('planBanner');
+  if (!info) { banner.style.display = 'none'; return; }
+  banner.style.display = 'block';
+  banner.innerHTML = `<strong>Plan ${info.label} (${info.precio})</strong>: completá tus datos y después coordinamos el pago por WhatsApp.`;
+};
+updatePlanBanner();
+
 // ── Cloudinary upload ──
 let selectedImageFile = null;
 let uploadedImageUrl = '';
@@ -114,6 +132,7 @@ window.submitForm = async function() {
   const descripcion = document.getElementById('descripcion').value.trim();
   const instagram = document.getElementById('instagram').value.trim();
   const beneficio = document.getElementById('beneficio').value.trim();
+  const planSolicitado = planSelect.value;
 
   if (!nombre || !negocio || !categoria || !ubicacion || !whatsapp || !descripcion) {
     alert('Por favor completá todos los campos obligatorios.');
@@ -160,6 +179,7 @@ window.submitForm = async function() {
       descripcion,
       beneficio,
       image: uploadedImageUrl || '',
+      planSolicitado,
       pendiente: true,
       fechaSolicitud: new Date().toISOString()
     });
@@ -176,6 +196,7 @@ window.submitForm = async function() {
         instagram: instagram,
         descripcion: descripcion,
         beneficio: beneficio,
+        planSolicitado: planSolicitado,
         to_email: emailjsConfig.toEmail
       });
     } catch(mailErr) {
@@ -184,6 +205,13 @@ window.submitForm = async function() {
 
     document.getElementById('formContent').style.display = 'none';
     document.getElementById('formSuccess').style.display = 'block';
+
+    const info = PLAN_INFO[planSolicitado];
+    if (info) {
+      const cta = document.getElementById('successCtaPlan');
+      cta.style.display = 'block';
+      cta.innerHTML = `Ahora coordinemos el pago del plan ${info.label}: <a href="https://wa.me/5492494209036?text=${encodeURIComponent(`Hola! Acabo de sumarme a Criar Cerca (${negocio}) y quiero el plan ${info.label}`)}" target="_blank">Escribinos por WhatsApp</a>`;
+    }
   } catch (err) {
     console.error("Error:", err);
     alert('Hubo un error al enviar tu solicitud. Por favor intentá de nuevo.');

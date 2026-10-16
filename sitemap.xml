@@ -25,6 +25,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.criarcerca.com.ar/planes.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.criarcerca.com.ar/categorias/ninieras-tandil.html</loc>
     <lastmod>2026-08-25</lastmod>
     <changefreq>weekly</changefreq>

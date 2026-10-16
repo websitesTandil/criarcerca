@@ -61,6 +61,7 @@
   </button>
   <nav>
     <a href="servicios.html">Servicios</a>
+    <a href="planes.html">Planes</a>
     <a href="unirse.html">Unirse</a>
     <a href="faq.html">FAQ</a>
     <a href="https://www.instagram.com/criar.cerca" target="_blank">Instagram</a>
@@ -73,6 +74,7 @@
   <p>Publicá gratis y llegá a cientos de familias de Tandil y zona</p>
   <div class="form-container fade-in">
     <div id="formContent">
+      <div class="plan-banner" id="planBanner" style="display:none"></div>
       <div class="form-row">
         <div class="form-group">
           <label>Nombre</label>
@@ -137,12 +139,22 @@
           <p id="uploadStatus">Subiendo imagen...</p>
         </div>
       </div>
+      <div class="form-group">
+        <label>Plan</label>
+        <p class="field-hint">Si elegís un plan pago, después coordinamos el pago por WhatsApp. <a href="planes.html" style="color:var(--blush)">Ver qué incluye cada plan</a></p>
+        <select id="plan" onchange="updatePlanBanner()">
+          <option value="free">Gratis</option>
+          <option value="estandar">Estándar · $5.000/mes</option>
+          <option value="premium">Premium · $10.000/mes</option>
+        </select>
+      </div>
       <button class="btn-submit" id="submitBtn" onclick="submitForm()">Quiero aparecer en el directorio 🌿</button>
     </div>
     <div class="form-success" id="formSuccess">
       <div class="icon">💚</div>
       <h3>¡Gracias por sumarte!</h3>
       <p>Recibimos tu información, próximamente estará publicado en la web.</p>
+      <p class="form-success-cta" id="successCtaPlan" style="display:none"></p>
     </div>
   </div>
 </section>
