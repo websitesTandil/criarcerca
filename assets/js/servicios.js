@@ -5,7 +5,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./config.js";
 import { CATEGORIES } from "./categories.js";
-import { providerCardHtml, setupModal, observeFadeIns, matchesSearch, categoriesOf } from "./directory-common.js";
+import { providerCardHtml, setupModal, observeFadeIns, matchesSearch, categoriesOf, trackSearch } from "./directory-common.js";
 import { mountPartials, categoryPageFor } from "./partials.js";
 
 mountPartials('');
@@ -113,6 +113,12 @@ window.toggleBenefitFilter = function() {
 window.filterProviders = function() {
   currentSearch = document.getElementById('searchInput').value;
   renderProviders();
+  const resultados = allProviders.filter(p =>
+    (currentCategory === 'todos' || categoriesOf(p).includes(currentCategory)) &&
+    (!onlyBenefit || !!p.beneficio) &&
+    matchesSearch(p, currentSearch)
+  ).length;
+  trackSearch(currentSearch, resultados, 'servicios', { immediate: true });
 };
 
 // ── Search con Enter ──
