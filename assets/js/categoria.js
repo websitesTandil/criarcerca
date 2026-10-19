@@ -6,7 +6,7 @@ import {
 import { firebaseConfig } from "./config.js";
 import {
   providerCardHtml, destacadoWideHtml, initDescToggles, isFeatured, sortFeatured,
-  setupModal, observeFadeIns, matchesSearch, categoriesOf, subcategoriasOf
+  setupModal, observeFadeIns, matchesSearch, categoriesOf, subcategoriasOf, trackSearch
 } from "./directory-common.js";
 import { mountPartials, mountCategoryPills, categoryPageFor } from "./partials.js";
 import { subcategoriesFor } from "./subcategories.js";
@@ -213,12 +213,28 @@ function addSearchBar() {
       <button onclick="filterProviders()">Buscar</button>
     </div>
     <p class="search-hint">También podés buscar por ciudad, si no sos de Tandil</p>`);
-  document.getElementById('searchInput').addEventListener('input', () => window.filterProviders());
+  const input = document.getElementById('searchInput');
+  input.addEventListener('input', () => window.filterProviders({ immediate: false }));
+  // Enter registra la búsqueda en el momento, sin esperar la pausa de escritura.
+  input.addEventListener('keyup', e => {
+    if (e.key === 'Enter') window.filterProviders({ immediate: true });
+  });
 }
 
-window.filterProviders = function() {
+// Cuántos proveedores muestra la búsqueda, contando los destacados que coinciden.
+function searchResultCount() {
+  return providers.filter(p => {
+    const matchSubcat = !currentSubcategory || subcategoriasOf(p).includes(currentSubcategory);
+    const matchBenefit = !onlyBenefit || !!p.beneficio;
+    return matchSubcat && matchBenefit && matchesSearch(p, currentSearch);
+  }).length;
+}
+
+// El botón "Buscar" (onclick sin argumentos) también registra en el momento.
+window.filterProviders = function({ immediate = true } = {}) {
   currentSearch = document.getElementById('searchInput').value;
   renderProviders();
+  trackSearch(currentSearch, searchResultCount(), CATEGORY, { immediate });
 };
 
 window.toggleBenefitFilter = function() {

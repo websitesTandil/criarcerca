@@ -179,6 +179,30 @@ export function trackProviderView(provider, origen = 'listado') {
   });
 }
 
+// Búsquedas del listado (servicios.html y páginas de categoría). Se registra el
+// término cuando la persona deja de escribir o aprieta Buscar/Enter, no cada
+// tecla. resultados: cuántos proveedores encontró; con 0 se ve qué buscan las
+// familias que todavía no está en la guía.
+let searchTimer;
+let lastTrackedSearch = '';
+export function trackSearch(term, resultados, pagina, { immediate = false } = {}) {
+  clearTimeout(searchTimer);
+  const q = normalizeText(term).trim();
+  if (q.length < 2 || typeof gtag !== 'function') return;
+  const send = () => {
+    const key = `${pagina}::${q}`;
+    if (key === lastTrackedSearch) return;
+    lastTrackedSearch = key;
+    gtag('event', 'buscar', {
+      termino_busqueda: term.trim().toLowerCase().slice(0, 100),
+      resultados,
+      pagina_busqueda: pagina,
+    });
+  };
+  if (immediate) send();
+  else searchTimer = setTimeout(send, 1500);
+}
+
 export function trackProviderContact(provider, canal, origen = 'listado') {
   if (typeof gtag !== 'function') return;
   gtag('event', 'contacto_proveedor', {
