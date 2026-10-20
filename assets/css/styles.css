@@ -1409,11 +1409,6 @@
   cursor: default;
 }
 .destacado-skeleton .destacado-image { background: var(--sand); }
-.destacado-wide.destacado-skeleton-wide {
-  animation: skeleton-pulse 1.3s ease-in-out infinite;
-  border-color: var(--sand);
-}
-.destacado-wide.destacado-skeleton-wide .dw-image { background: var(--sand); }
 @keyframes skeleton-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 .destacado-benefit {
   position: absolute;
@@ -1428,150 +1423,14 @@
 }
 .category-destacados {
   margin-bottom: 32px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--sand);
 }
 .category-destacados h3 {
   font-family: 'Playfair Display', serif;
   font-size: 1.25rem;
   color: var(--green-deep);
   margin-bottom: 14px;
-}
-.destacados-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-}
-.destacado-wide {
-  display: grid;
-  grid-template-columns: 180px minmax(0, 1fr);
-  gap: 20px;
-  align-items: start;
-  background: var(--white);
-  border: 1.5px solid var(--terracotta);
-  border-radius: 20px;
-  padding: 18px;
-}
-/* Un destacado solo ocupa todo el ancho, con el texto en una columna cómoda de leer. */
-.destacado-wide:only-child { grid-column: 1 / -1; }
-.destacado-wide:only-child .dw-body { max-width: 720px; }
-.dw-image {
-  position: relative;
-  height: 180px;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid var(--sand);
-  background: var(--green-pale);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-}
-.dw-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  padding: 14px;
-  background: white;
-}
-.dw-image.color-1 { background: linear-gradient(135deg, #c8dbc8, #a8c4a8); }
-.dw-cat {
-  display: block;
-  font-size: 0.7rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--green-mid);
-  margin-bottom: 6px;
-}
-.dw-body h4 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.25rem;
-  line-height: 1.25;
-  color: var(--green-deep);
-  margin-bottom: 4px;
-}
-.dw-negocio {
-  color: var(--terracotta);
-  font-size: 0.85rem;
-  font-weight: 500;
-  margin-bottom: 8px;
-}
-.dw-desc {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  line-height: 1.55;
-  margin-bottom: 10px;
-  white-space: pre-line;
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.dw-desc.expanded {
-  display: block;
-  -webkit-line-clamp: unset;
-}
-.dw-toggle {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: -4px 0 10px;
-  font-family: inherit;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--terracotta);
-  cursor: pointer;
-}
-.dw-toggle:hover { text-decoration: underline; }
-.dw-toggle[hidden] { display: none; }
-.dw-body .modal-benefit {
-  font-size: 0.8rem;
-  padding: 8px 12px;
-  margin-bottom: 10px;
-}
-.dw-info {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 16px;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-bottom: 12px;
-}
-.dw-info a { color: var(--green-mid); overflow-wrap: anywhere; }
-.dw-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 16px;
-}
-.dw-btn {
-  display: inline-block;
-  background: var(--green-deep);
-  color: var(--cream);
-  padding: 10px 20px;
-  border-radius: 50px;
-  text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: background 0.2s;
-}
-.dw-btn:hover { background: var(--green-mid); }
-.dw-more {
-  background: none;
-  border: none;
-  padding: 0;
-  font-family: inherit;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--terracotta);
-  cursor: pointer;
-}
-.dw-more:hover { text-decoration: underline; }
-@media (max-width: 900px) {
-  .destacados-list { grid-template-columns: 1fr; }
-}
-@media (max-width: 560px) {
-  .destacado-wide { grid-template-columns: 1fr; gap: 14px; padding: 14px; }
-  .dw-image { height: 200px; }
 }
 .destacado-body { padding: 16px 18px; }
 .destacado-cat {
@@ -1594,6 +1453,12 @@
   font-size: 0.8rem;
   font-weight: 500;
   line-height: 1.4;
+  margin-bottom: 8px;
+}
+.destacado-desc {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
   margin-bottom: 8px;
 }
 .destacado-location {

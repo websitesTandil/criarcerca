@@ -3,8 +3,18 @@ import {
   getFirestore, collection, getDocs, query, where, orderBy
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./config.js";
-import { destacadoCardHtml, isFeatured, sortFeatured, setupModal } from "./directory-common.js";
+import { destacadoCardHtml, isFeatured, setupModal } from "./directory-common.js";
 import { mountPartials } from "./partials.js";
+
+// Orden al azar en cada carga, para que no sean siempre los mismos primeros.
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 // La home no usa header/footer inyectados: mountPartials solo arma el modal.
 mountPartials('');
@@ -43,7 +53,7 @@ async function loadDestacados() {
     // así no hace falta un índice compuesto nuevo en Firestore.
     const q = query(collection(db, "providers"), where("pendiente", "==", false), orderBy("fechaCreacion", "asc"));
     const snap = await getDocs(q);
-    destacados = sortFeatured(
+    destacados = shuffle(
       snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(isFeatured)
     );
 

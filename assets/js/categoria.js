@@ -5,7 +5,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./config.js";
 import {
-  providerCardHtml, destacadoWideHtml, initDescToggles, isFeatured, sortFeatured,
+  providerCardHtml, destacadoCardHtml, isFeatured, sortFeatured,
   setupModal, observeFadeIns, matchesSearch, categoriesOf, subcategoriasOf, trackSearch
 } from "./directory-common.js";
 import { mountPartials, mountCategoryPills, categoryPageFor } from "./partials.js";
@@ -42,17 +42,21 @@ function renderDestacadosSkeleton() {
   wrap.className = 'category-destacados';
   wrap.innerHTML = `
     <h3>Destacados ✨</h3>
-    <div class="destacados-list">
-      <div class="destacado-wide destacado-skeleton-wide">
-        <div class="dw-image"></div>
-        <div class="dw-body">
-          <span class="skeleton-line short" style="display:block;margin-bottom:10px"></span>
-          <div class="skeleton-line title"></div>
-          <span class="skeleton-line short" style="display:block"></span>
-        </div>
-      </div>
+    <div class="destacados-track">
+      ${Array(3).fill(`
+        <div class="destacado-card destacado-skeleton">
+          <div class="destacado-image"></div>
+          <div class="destacado-body">
+            <span class="skeleton-line short" style="display:block;margin-bottom:10px"></span>
+            <div class="skeleton-line title"></div>
+            <span class="skeleton-line short" style="display:block"></span>
+          </div>
+        </div>`).join('')}
     </div>`;
-  document.querySelector('.providers-section .section-header').insertAdjacentElement('afterend', wrap);
+  // Debajo de buscador, "Solo con descuento" y los filtros de subcategoría
+  // (los tres son estáticos en el HTML, existen desde el inicio aunque el
+  // buscador recién se arme con JS más abajo en esta misma carga).
+  document.getElementById('subcategoryFilters').insertAdjacentElement('afterend', wrap);
 }
 
 async function loadProviders() {
@@ -99,13 +103,12 @@ function renderDestacados() {
     wrap = document.createElement('div');
     wrap.id = 'categoryDestacados';
     wrap.className = 'category-destacados';
-    document.querySelector('.providers-section .section-header').insertAdjacentElement('afterend', wrap);
+    document.getElementById('subcategoryFilters').insertAdjacentElement('afterend', wrap);
   }
   wrap.style.display = 'block';
   wrap.innerHTML = `
     <h3>Destacados ✨</h3>
-    <div class="destacados-list">${featured.map(p => destacadoWideHtml(p, CATEGORY)).join('')}</div>`;
-  initDescToggles();
+    <div class="destacados-track">${featured.map(p => destacadoCardHtml(p, CATEGORY)).join('')}</div>`;
 }
 
 function renderProviders() {
