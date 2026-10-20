@@ -62,7 +62,7 @@ async function loadDestacados() {
       return;
     }
 
-    track.innerHTML = destacados.map(destacadoCardHtml).join('');
+    track.innerHTML = destacados.map(p => destacadoCardHtml(p)).join('');
   } catch (err) {
     console.error('Error cargando destacados:', err);
     section.style.display = 'none';
