@@ -53,25 +53,18 @@ function renderDestacadosSkeleton() {
           </div>
         </div>`).join('')}
     </div>`;
-  // Debajo de todos los filtros (subcategorías, "solo con descuento" y
-  // buscador): el hint del buscador es lo último que arma reorderFilters()
-  // + addSearchBar(), así que queda como ancla estable.
-  document.querySelector('.search-hint').insertAdjacentElement('afterend', wrap);
+  // Debajo de los filtros (subcategorías y "solo con beneficio"), antes de
+  // la grilla. El buscador quedó arriba de todo, junto al título.
+  document.getElementById('benefitFilterBtn').insertAdjacentElement('afterend', wrap);
 }
 
-// Reacomoda los filtros estáticos del HTML: subcategorías primero, y debajo
-// una fila con "Solo con descuento" a la izquierda y el buscador (chico) a la
-// derecha, en vez de cada uno en su propia línea.
+// Subcategorías arriba de "Solo con beneficio" (el HTML estático las trae en
+// el orden opuesto).
 function reorderFilters() {
   const benefitBtn = document.getElementById('benefitFilterBtn');
   const subcatFilters = document.getElementById('subcategoryFilters');
   if (!benefitBtn || !subcatFilters) return;
-
-  const row = document.createElement('div');
-  row.className = 'filters-row';
-  benefitBtn.insertAdjacentElement('beforebegin', row);
-  row.appendChild(benefitBtn);
-  row.insertAdjacentElement('beforebegin', subcatFilters);
+  benefitBtn.insertAdjacentElement('beforebegin', subcatFilters);
 }
 
 async function loadProviders() {
@@ -121,7 +114,7 @@ function renderDestacados() {
     wrap = document.createElement('div');
     wrap.id = 'categoryDestacados';
     wrap.className = 'category-destacados';
-    document.getElementById('subcategoryFilters').insertAdjacentElement('afterend', wrap);
+    document.getElementById('benefitFilterBtn').insertAdjacentElement('afterend', wrap);
   }
   wrap.style.display = 'block';
   wrap.innerHTML = `
@@ -152,7 +145,7 @@ function renderProviders() {
   });
 
   const featuredCount = featuredForPage().length;
-  // "Solo con descuento" y la subcategoría no filtran los destacados, así que
+  // "Solo con beneficio" y la subcategoría no filtran los destacados, así que
   // no se suman al total cuando están activos (mostrarían de más). La búsqueda
   // sí los filtra, así que cuenta normal con ella sola o sin ningún filtro.
   const otherFiltersActive = onlyBenefit || (!!currentSubcategory && !FIXED_SUBCATEGORY);
@@ -214,30 +207,57 @@ function renderSubcategoryFilters() {
       : `<button class="filter-btn${activeCls(isActive)}" onclick="setSubcategory('${s.value}', this)">${s.label}</button>`;
   }).join('');
 
+  // Mismas opciones que las pastillas, en un <select> para mobile (igual que
+  // mountCategoryPills en partials.js). Las que filtran en el lugar van con
+  // value="#valor" (setSubcategoryFromSelect lo distingue de una URL real).
+  const allOption = onSubpage
+    ? `<option value="${parent}">Todas</option>`
+    : `<option value="#"${!currentSubcategory ? ' selected' : ''}>Todas</option>`;
+
+  const itemOptions = options.map(s => {
+    const isActive = s.value === currentSubcategory;
+    if (s.page) return `<option value="${s.page}"${isActive ? ' selected' : ''}>${s.label}</option>`;
+    const value = onSubpage ? `${parent}?sub=${s.value}` : `#${s.value}`;
+    return `<option value="${value}"${isActive ? ' selected' : ''}>${s.label}</option>`;
+  }).join('');
+
   wrap.style.display = 'flex';
-  wrap.innerHTML = all + items;
+  wrap.innerHTML = `
+    ${all}${items}
+    <select class="subcategory-filters-select" aria-label="Subcategoría" onchange="setSubcategoryFromSelect(this.value)">
+      ${allOption}${itemOptions}
+    </select>`;
 }
 
 window.setSubcategory = function(sub, btn) {
   currentSubcategory = sub;
   document.querySelectorAll('#subcategoryFilters .filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
   renderProviders();
 };
 
-// Cuadro de búsqueda del listado: se agrega arriba de los filtros y filtra a
-// medida que se escribe (el botón "Buscar" y Enter hacen lo mismo).
+window.setSubcategoryFromSelect = function(value) {
+  if (value.startsWith('#')) {
+    window.setSubcategory(value.slice(1));
+  } else {
+    window.location.href = value;
+  }
+};
+
+// Cuadro de búsqueda del listado: grande, junto al título (antes que la nav de
+// "otras categorías"), igual que en servicios.html. Filtra a medida que se
+// escribe (el botón "Buscar" y Enter hacen lo mismo).
 const emptyDefaultText = document.querySelector('#emptyState p')?.textContent || '';
 
 function addSearchBar() {
-  const row = document.querySelector('.filters-row');
-  if (!row) return;
-  row.insertAdjacentHTML('beforeend', `
-    <div class="search-bar list-search small-search">
-      <input type="text" id="searchInput" placeholder="Buscar..." aria-label="Buscar en el listado" />
+  const subtitle = document.querySelector('.search-section p');
+  if (!subtitle) return;
+  subtitle.insertAdjacentHTML('afterend', `
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Buscá por nombre, tipo de servicio o ciudad..." aria-label="Buscar en el listado" />
       <button onclick="filterProviders()">Buscar</button>
-    </div>`);
-  row.insertAdjacentHTML('afterend', `<p class="search-hint">Podés buscar por nombre, tipo de servicio o ciudad</p>`);
+    </div>
+    <p class="search-hint">Podés buscar por nombre, tipo de servicio o ciudad</p>`);
   const input = document.getElementById('searchInput');
   input.addEventListener('input', () => window.filterProviders({ immediate: false }));
   // Enter registra la búsqueda en el momento, sin esperar la pausa de escritura.
@@ -271,18 +291,18 @@ window.toggleBenefitFilter = function() {
 setupModal(id => providers.find(x => x.id === id), 'listado', CATEGORY);
 
 // Las FAQ quedan al final de la página, después de todas las tarjetas, y en las
-// categorías grandes cuesta llegar. Se agrega un acceso directo bajo el subtítulo.
+// categorías grandes cuesta llegar. Se agrega un acceso directo bajo el buscador.
 function addFaqJumpLink() {
   const faq = document.querySelector('.faq-section');
-  const subtitle = document.querySelector('.search-section p');
-  if (!faq || !subtitle) return;
+  const hint = document.querySelector('.search-section .search-hint');
+  if (!faq || !hint) return;
   faq.id = 'faq';
-  subtitle.insertAdjacentHTML('afterend', '<a class="faq-jump" href="#faq">Preguntas frecuentes ↓</a>');
+  hint.insertAdjacentHTML('afterend', '<a class="faq-jump" href="#faq">Preguntas frecuentes ↓</a>');
 }
 
+addSearchBar();
 addFaqJumpLink();
 reorderFilters();
-addSearchBar();
 renderDestacadosSkeleton();
 
 observeFadeIns();

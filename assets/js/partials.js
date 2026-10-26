@@ -85,21 +85,36 @@ export function mountPartials(basePath = '') {
 
 // Arma la nav de "Otras categorías" a partir de CATEGORIES, marcando como
 // activa la de currentCategory. Se inyecta en el contenedor #categoryPills.
+// En mobile las pastillas se esconden (son once, ocupan media pantalla) y se
+// ve en su lugar un <select> con las mismas opciones (ver CSS).
 export function mountCategoryPills(currentCategory, basePath = '') {
   const nav = document.getElementById('categoryPills');
   if (!nav) return;
 
   // Las categorías sin página propia (hoy solo "Otros") llevan al listado general
   // ya filtrado, así no desaparecen de la barra.
-  const pills = CATEGORIES
-    .map(c => {
-      const cls = c.value === currentCategory ? 'filter-btn active' : 'filter-btn';
-      const href = CATEGORY_PAGES[c.value] || `${basePath}servicios.html?cat=${encodeURIComponent(c.value)}`;
-      return `<a class="${cls}" href="${href}">${c.emoji} ${c.label}</a>`;
-    })
+  const options = [
+    { value: '', label: 'Ver todos', href: `${basePath}servicios.html` },
+    ...CATEGORIES.map(c => ({
+      value: c.value,
+      label: `${c.emoji} ${c.label}`,
+      href: CATEGORY_PAGES[c.value] || `${basePath}servicios.html?cat=${encodeURIComponent(c.value)}`
+    })),
+  ];
+
+  const pills = options
+    .map(o => `<a class="filter-btn${o.value === currentCategory ? ' active' : ''}" href="${o.href}">${o.label}</a>`)
     .join('');
 
-  nav.innerHTML = `<a class="filter-btn" href="${basePath}servicios.html">Ver todos</a>${pills}`;
+  const selectOptions = options
+    .map(o => `<option value="${o.href}"${o.value === currentCategory ? ' selected' : ''}>${o.label}</option>`)
+    .join('');
+
+  nav.innerHTML = `
+    ${pills}
+    <select class="category-pills-select" aria-label="Otras categorías" onchange="if (this.value) window.location.href = this.value">
+      ${selectOptions}
+    </select>`;
 }
 
 // Archivo de /categorias/ que corresponde a una categoría (para armar links).

@@ -79,17 +79,40 @@ function renderProviders() {
 }
 
 // Las categorías con página propia en /categorias/ son links a esa página; las
-// que no la tienen (hoy solo "Otros") filtran en el lugar.
+// que no la tienen (hoy solo "Otros") filtran en el lugar. También arma un
+// <select> con las mismas opciones para mobile (igual que en categoria.js /
+// partials.js): las pastillas se esconden ahí y se ve el select en su lugar.
 function renderCategoryFilters() {
-  document.getElementById('categoryFilters').insertAdjacentHTML('beforeend',
-    CATEGORIES.map(c => {
-      const page = categoryPageFor(c.value);
-      return page
-        ? `<a class="filter-btn" href="categorias/${page}">${c.emoji} ${c.label}</a>`
-        : `<button class="filter-btn" onclick="setCategory('${c.value}', this)">${c.emoji} ${c.label}</button>`;
-    }).join('')
+  const wrap = document.getElementById('categoryFilters');
+  const items = CATEGORIES.map(c => ({
+    value: c.value,
+    label: `${c.emoji} ${c.label}`,
+    page: categoryPageFor(c.value),
+  }));
+
+  wrap.insertAdjacentHTML('beforeend',
+    items.map(it => it.page
+      ? `<a class="filter-btn" href="categorias/${it.page}">${it.label}</a>`
+      : `<button class="filter-btn" onclick="setCategory('${it.value}', this)">${it.label}</button>`
+    ).join('')
   );
+
+  const selectOptions = [`<option value="#todos" selected>Todos</option>`]
+    .concat(items.map(it => `<option value="${it.page ? 'categorias/' + it.page : '#' + it.value}">${it.label}</option>`))
+    .join('');
+  wrap.insertAdjacentHTML('afterend', `
+    <select class="category-filters-select" aria-label="Categoría" onchange="setCategoryFromSelect(this.value)">
+      ${selectOptions}
+    </select>`);
 }
+
+window.setCategoryFromSelect = function(value) {
+  if (value.startsWith('#')) {
+    window.setCategory(value.slice(1));
+  } else {
+    window.location.href = value;
+  }
+};
 
 // ── Modal + tracking (compartido con las páginas de categoría) ──
 setupModal(id => allProviders.find(x => x.id === id), 'listado', () => currentCategory !== 'todos' ? currentCategory : undefined);
@@ -99,7 +122,9 @@ window.setCategory = function(cat, btn) {
   onlyBenefit = false;
   document.getElementById('benefitFilterBtn').classList.remove('active');
   document.querySelectorAll('#categoryFilters .filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
+  const select = document.querySelector('.category-filters-select');
+  if (select) select.value = `#${cat}`;
   history.replaceState(null, '', cat === 'todos' ? window.location.pathname : '?cat=' + encodeURIComponent(cat));
   renderProviders();
 };
@@ -148,6 +173,8 @@ renderCategoryFilters();
       currentCategory = cat;
       document.querySelectorAll('#categoryFilters .filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      const select = document.querySelector('.category-filters-select');
+      if (select) select.value = `#${cat}`;
     }
   });
 })();
