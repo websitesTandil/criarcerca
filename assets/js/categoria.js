@@ -53,10 +53,25 @@ function renderDestacadosSkeleton() {
           </div>
         </div>`).join('')}
     </div>`;
-  // Debajo de buscador, "Solo con descuento" y los filtros de subcategoría
-  // (los tres son estáticos en el HTML, existen desde el inicio aunque el
-  // buscador recién se arme con JS más abajo en esta misma carga).
-  document.getElementById('subcategoryFilters').insertAdjacentElement('afterend', wrap);
+  // Debajo de todos los filtros (subcategorías, "solo con descuento" y
+  // buscador): el hint del buscador es lo último que arma reorderFilters()
+  // + addSearchBar(), así que queda como ancla estable.
+  document.querySelector('.search-hint').insertAdjacentElement('afterend', wrap);
+}
+
+// Reacomoda los filtros estáticos del HTML: subcategorías primero, y debajo
+// una fila con "Solo con descuento" a la izquierda y el buscador (chico) a la
+// derecha, en vez de cada uno en su propia línea.
+function reorderFilters() {
+  const benefitBtn = document.getElementById('benefitFilterBtn');
+  const subcatFilters = document.getElementById('subcategoryFilters');
+  if (!benefitBtn || !subcatFilters) return;
+
+  const row = document.createElement('div');
+  row.className = 'filters-row';
+  benefitBtn.insertAdjacentElement('beforebegin', row);
+  row.appendChild(benefitBtn);
+  row.insertAdjacentElement('beforebegin', subcatFilters);
 }
 
 async function loadProviders() {
@@ -83,12 +98,15 @@ async function loadProviders() {
   }
 }
 
-// Destacados (Estándar y Premium) de esta página: van fijos arriba del buscador
-// y de los filtros, así que no se filtran. En una subpágina (ej. salones) solo
-// entran los de esa subcategoría.
+// Destacados (Estándar y Premium) de esta página. En una subpágina (ej. salones)
+// solo entran los de esa subcategoría. Si hay texto en el buscador también se
+// filtran por eso, para no mostrar destacados que no tienen nada que ver con
+// lo que se buscó.
 function featuredForPage() {
   return sortFeatured(providers.filter(p =>
-    isFeatured(p) && (!FIXED_SUBCATEGORY || subcategoriasOf(p).includes(FIXED_SUBCATEGORY))
+    isFeatured(p) &&
+    (!FIXED_SUBCATEGORY || subcategoriasOf(p).includes(FIXED_SUBCATEGORY)) &&
+    matchesSearch(p, currentSearch)
   ));
 }
 
@@ -134,8 +152,12 @@ function renderProviders() {
   });
 
   const featuredCount = featuredForPage().length;
-  const filtersActive = !!currentSearch.trim() || onlyBenefit || (!!currentSubcategory && !FIXED_SUBCATEGORY);
-  const total = filtersActive ? rest.length : rest.length + featuredCount;
+  // "Solo con descuento" y la subcategoría no filtran los destacados, así que
+  // no se suman al total cuando están activos (mostrarían de más). La búsqueda
+  // sí los filtra, así que cuenta normal con ella sola o sin ningún filtro.
+  const otherFiltersActive = onlyBenefit || (!!currentSubcategory && !FIXED_SUBCATEGORY);
+  const filtersActive = !!currentSearch.trim() || otherFiltersActive;
+  const total = otherFiltersActive ? rest.length : rest.length + featuredCount;
 
   renderDestacados();
   comingSoon.style.display = 'none';
@@ -208,14 +230,14 @@ window.setSubcategory = function(sub, btn) {
 const emptyDefaultText = document.querySelector('#emptyState p')?.textContent || '';
 
 function addSearchBar() {
-  const anchor = document.getElementById('benefitFilterBtn');
-  if (!anchor) return;
-  anchor.insertAdjacentHTML('beforebegin', `
-    <div class="search-bar list-search">
-      <input type="text" id="searchInput" placeholder="Buscá por nombre, tipo de servicio o ciudad..." aria-label="Buscar en el listado" />
+  const row = document.querySelector('.filters-row');
+  if (!row) return;
+  row.insertAdjacentHTML('beforeend', `
+    <div class="search-bar list-search small-search">
+      <input type="text" id="searchInput" placeholder="Buscar..." aria-label="Buscar en el listado" />
       <button onclick="filterProviders()">Buscar</button>
-    </div>
-    <p class="search-hint">También podés buscar por ciudad, si no sos de Tandil</p>`);
+    </div>`);
+  row.insertAdjacentHTML('afterend', `<p class="search-hint">Podés buscar por nombre, tipo de servicio o ciudad</p>`);
   const input = document.getElementById('searchInput');
   input.addEventListener('input', () => window.filterProviders({ immediate: false }));
   // Enter registra la búsqueda en el momento, sin esperar la pausa de escritura.
@@ -259,6 +281,7 @@ function addFaqJumpLink() {
 }
 
 addFaqJumpLink();
+reorderFilters();
 addSearchBar();
 renderDestacadosSkeleton();
 

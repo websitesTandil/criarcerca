@@ -306,6 +306,42 @@
     margin-bottom: 20px;
   }
 
+  /* Fila de filtros de categoría: "Solo con descuento" a la izquierda y el
+     buscador, más chico, a la derecha, en vez de cada uno en su propia línea. */
+  .filters-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .filters-row .benefit-btn {
+    margin-bottom: 0;
+  }
+  .filters-row .search-bar.small-search {
+    margin: 0 0 0 auto;
+    flex: 0 1 260px;
+  }
+  .filters-row .search-bar.small-search input {
+    padding: 9px 16px;
+    font-size: 0.82rem;
+  }
+  .filters-row .search-bar.small-search button {
+    padding: 8px 16px;
+    font-size: 0.76rem;
+  }
+  .filters-row + .search-hint {
+    max-width: none;
+    width: 100%;
+    margin: 0 0 20px;
+    text-align: right;
+  }
+  @media (max-width: 560px) {
+    .filters-row .search-bar.small-search { flex-basis: 100%; }
+    .filters-row + .search-hint { text-align: center; }
+  }
+
   .category-filters {
     display: flex;
     gap: 10px;
