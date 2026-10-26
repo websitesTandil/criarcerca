@@ -32,6 +32,11 @@ let currentSubcategory = FIXED_SUBCATEGORY || validParamSub;
 let currentSearch = '';
 let onlyBenefit = false;
 
+// Cuántas tarjetas se muestran de entrada y cuántas se suman por cada click
+// en "Cargar más" (categorías grandes como fiestas llegan a 80+ servicios).
+const PAGE_SIZE = 24;
+let visibleCount = PAGE_SIZE;
+
 // Placeholder que se ve desde el primer instante, antes de que responda Firestore:
 // sin esto la franja de destacados queda invisible mientras carga (el buscador, los
 // filtros y el spinner de la grilla sí se ven de una) y alguien que ya viene bajando
@@ -92,13 +97,14 @@ async function loadProviders() {
 }
 
 // Destacados (Estándar y Premium) de esta página. En una subpágina (ej. salones)
-// solo entran los de esa subcategoría. Si hay texto en el buscador también se
-// filtran por eso, para no mostrar destacados que no tienen nada que ver con
-// lo que se buscó.
+// solo entran los de esa subcategoría, y lo mismo si se eligió una desde las
+// pastillas en la página principal de la categoría (currentSubcategory cubre
+// ambos casos). Si hay texto en el buscador también se filtran por eso, para
+// no mostrar destacados que no tienen nada que ver con lo que se buscó.
 function featuredForPage() {
   return sortFeatured(providers.filter(p =>
     isFeatured(p) &&
-    (!FIXED_SUBCATEGORY || subcategoriasOf(p).includes(FIXED_SUBCATEGORY)) &&
+    (!currentSubcategory || subcategoriasOf(p).includes(currentSubcategory)) &&
     matchesSearch(p, currentSearch)
   ));
 }
@@ -145,12 +151,11 @@ function renderProviders() {
   });
 
   const featuredCount = featuredForPage().length;
-  // "Solo con beneficio" y la subcategoría no filtran los destacados, así que
-  // no se suman al total cuando están activos (mostrarían de más). La búsqueda
-  // sí los filtra, así que cuenta normal con ella sola o sin ningún filtro.
-  const otherFiltersActive = onlyBenefit || (!!currentSubcategory && !FIXED_SUBCATEGORY);
-  const filtersActive = !!currentSearch.trim() || otherFiltersActive;
-  const total = otherFiltersActive ? rest.length : rest.length + featuredCount;
+  // "Solo con beneficio" es el único filtro que no se aplica a los destacados,
+  // así que es el único que no se suma al total cuando está activo (mostraría
+  // de más). Búsqueda y subcategoría sí los filtran, cuentan normal.
+  const filtersActive = !!currentSearch.trim() || onlyBenefit || (!!currentSubcategory && !FIXED_SUBCATEGORY);
+  const total = onlyBenefit ? rest.length : rest.length + featuredCount;
 
   renderDestacados();
   comingSoon.style.display = 'none';
@@ -171,11 +176,30 @@ function renderProviders() {
   }
 
   empty.style.display = 'none';
-  grid.innerHTML = rest.map(p => providerCardHtml(p, CATEGORY)).join('');
+  const visible = rest.slice(0, visibleCount);
+  grid.innerHTML = visible.map(p => providerCardHtml(p, CATEGORY)).join('');
+  renderLoadMoreButton(rest.length);
 
   setTimeout(() => {
     document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
   }, 50);
+}
+
+// "Cargar más" debajo de la grilla, solo si quedan servicios sin mostrar.
+function renderLoadMoreButton(totalCount) {
+  let btn = document.getElementById('loadMoreBtn');
+  if (visibleCount >= totalCount) {
+    if (btn) btn.remove();
+    return;
+  }
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.id = 'loadMoreBtn';
+    btn.className = 'load-more-btn';
+    btn.onclick = () => { visibleCount += PAGE_SIZE; renderProviders(); };
+    document.getElementById('providersGrid').insertAdjacentElement('afterend', btn);
+  }
+  btn.textContent = `Ver más servicios (${totalCount - visibleCount} más)`;
 }
 
 function renderSubcategoryFilters() {
@@ -231,6 +255,7 @@ function renderSubcategoryFilters() {
 
 window.setSubcategory = function(sub, btn) {
   currentSubcategory = sub;
+  visibleCount = PAGE_SIZE;
   document.querySelectorAll('#subcategoryFilters .filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   renderProviders();
@@ -278,12 +303,14 @@ function searchResultCount() {
 // El botón "Buscar" (onclick sin argumentos) también registra en el momento.
 window.filterProviders = function({ immediate = true } = {}) {
   currentSearch = document.getElementById('searchInput').value;
+  visibleCount = PAGE_SIZE;
   renderProviders();
   trackSearch(currentSearch, searchResultCount(), CATEGORY, { immediate });
 };
 
 window.toggleBenefitFilter = function() {
   onlyBenefit = !onlyBenefit;
+  visibleCount = PAGE_SIZE;
   document.getElementById('benefitFilterBtn').classList.toggle('active', onlyBenefit);
   renderProviders();
 };

@@ -19,6 +19,11 @@ let currentCategory = 'todos';
 let currentSearch = '';
 let onlyBenefit = false;
 
+// Cuántas tarjetas se muestran de entrada y cuántas se suman por cada click
+// en "Cargar más" (174 servicios sin cortar era un scroll eterno).
+const PAGE_SIZE = 24;
+let visibleCount = PAGE_SIZE;
+
 // ── Cargar providers aprobados de Firestore ──
 async function loadProviders() {
   try {
@@ -54,7 +59,7 @@ function renderProviders() {
     return;
   }
 
-  let filtered = allProviders.filter(p => {
+  const filtered = allProviders.filter(p => {
     const matchCat = currentCategory === 'todos' || categoriesOf(p).includes(currentCategory);
     const matchBenefit = !onlyBenefit || !!p.beneficio;
     return matchCat && matchBenefit && matchesSearch(p, currentSearch);
@@ -71,12 +76,36 @@ function renderProviders() {
 
   empty.style.display = 'none';
   const context = currentCategory !== 'todos' ? currentCategory : undefined;
-  grid.innerHTML = filtered.map(p => providerCardHtml(p, context)).join('');
+  const visible = filtered.slice(0, visibleCount);
+  grid.innerHTML = visible.map(p => providerCardHtml(p, context)).join('');
+  renderLoadMoreButton(filtered.length);
 
   setTimeout(() => {
     document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
   }, 50);
 }
+
+// "Cargar más" debajo de la grilla, solo si quedan servicios sin mostrar.
+function renderLoadMoreButton(totalCount) {
+  let btn = document.getElementById('loadMoreBtn');
+  if (visibleCount >= totalCount) {
+    if (btn) btn.remove();
+    return;
+  }
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.id = 'loadMoreBtn';
+    btn.className = 'load-more-btn';
+    btn.onclick = window.loadMoreProviders;
+    document.getElementById('providersGrid').insertAdjacentElement('afterend', btn);
+  }
+  btn.textContent = `Ver más servicios (${totalCount - visibleCount} más)`;
+}
+
+window.loadMoreProviders = function() {
+  visibleCount += PAGE_SIZE;
+  renderProviders();
+};
 
 // Las categorías con página propia en /categorias/ son links a esa página; las
 // que no la tienen (hoy solo "Otros") filtran en el lugar. También arma un
@@ -120,6 +149,7 @@ setupModal(id => allProviders.find(x => x.id === id), 'listado', () => currentCa
 window.setCategory = function(cat, btn) {
   currentCategory = cat;
   onlyBenefit = false;
+  visibleCount = PAGE_SIZE;
   document.getElementById('benefitFilterBtn').classList.remove('active');
   document.querySelectorAll('#categoryFilters .filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
@@ -131,12 +161,14 @@ window.setCategory = function(cat, btn) {
 
 window.toggleBenefitFilter = function() {
   onlyBenefit = !onlyBenefit;
+  visibleCount = PAGE_SIZE;
   document.getElementById('benefitFilterBtn').classList.toggle('active', onlyBenefit);
   renderProviders();
 };
 
 window.filterProviders = function() {
   currentSearch = document.getElementById('searchInput').value;
+  visibleCount = PAGE_SIZE;
   renderProviders();
   const resultados = allProviders.filter(p =>
     (currentCategory === 'todos' || categoriesOf(p).includes(currentCategory)) &&

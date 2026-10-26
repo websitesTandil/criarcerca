@@ -8,7 +8,7 @@
     --terracotta: #b5603e;
     --sand: #e2d8cc;
     --text: #1c2420;
-    --text-muted: #6b7b6e;
+    --text-muted: #5a6b5e;
     --white: #ffffff;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -392,6 +392,26 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 24px;
+  }
+
+  .load-more-btn {
+    display: block;
+    margin: 32px auto 0;
+    background: transparent;
+    border: 1.5px solid var(--green-mid);
+    color: var(--green-mid);
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .load-more-btn:hover {
+    background: var(--green-mid);
+    color: var(--cream);
   }
 
   .provider-card {
