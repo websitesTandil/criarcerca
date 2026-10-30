@@ -248,6 +248,7 @@ function renderSubcategoryFilters() {
   wrap.style.display = 'flex';
   wrap.innerHTML = `
     ${all}${items}
+    <span class="select-label">Filtrá por tipo de servicio</span>
     <select class="subcategory-filters-select" aria-label="Subcategoría" onchange="setSubcategoryFromSelect(this.value)">
       ${allOption}${itemOptions}
     </select>`;

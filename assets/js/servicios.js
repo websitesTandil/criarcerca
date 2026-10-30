@@ -130,6 +130,7 @@ function renderCategoryFilters() {
     .concat(items.map(it => `<option value="${it.page ? 'categorias/' + it.page : '#' + it.value}">${it.label}</option>`))
     .join('');
   wrap.insertAdjacentHTML('afterend', `
+    <span class="select-label">Seleccioná la categoría</span>
     <select class="category-filters-select" aria-label="Categoría" onchange="setCategoryFromSelect(this.value)">
       ${selectOptions}
     </select>`);

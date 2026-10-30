@@ -112,6 +112,7 @@ export function mountCategoryPills(currentCategory, basePath = '') {
 
   nav.innerHTML = `
     ${pills}
+    <span class="select-label">Seleccioná la categoría</span>
     <select class="category-pills-select" aria-label="Otras categorías" onchange="if (this.value) window.location.href = this.value">
       ${selectOptions}
     </select>`;

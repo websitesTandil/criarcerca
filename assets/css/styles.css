@@ -1167,11 +1167,20 @@
 .category-pills-select { display: none; }
 .subcategory-filters-select { display: none; }
 .category-filters-select { display: none; }
+.select-label { display: none; }
 @media (max-width: 600px) {
   /* Once pastillas ocupan media pantalla en mobile; se reemplazan por un
      select compacto con las mismas opciones. */
   .category-pills a.filter-btn { display: none; }
   .category-pills { padding: 24px 32px 12px; }
+  .select-label {
+    display: block;
+    width: 100%;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    margin: 0 0 8px;
+  }
   .category-pills-select,
   .category-filters-select {
     display: block;
